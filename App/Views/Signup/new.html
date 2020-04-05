@@ -1,0 +1,66 @@
+{% extends "basebeforelogin.html" %}
+
+{% block title %}Sign up{% endblock %}
+
+
+
+{% block body %}
+
+
+    <section class="container-fluid">
+        <section class="row justify-content-center">
+          <section class="col-12 col-sm-6 col-md-3 title">
+            <a href="/"><h1>Personal Budget</h1></a>
+          </section>      
+        </section>
+          <section class="row justify-content-center">
+              <section class="col-12 col-sm-6 col-md-3">
+                  <form class="form-container" action="/signup/create" method="post"> 
+                    <div class="formTitle">
+                      <h3>Sign up</h3>
+                    </div>
+                      <div class="form-group">
+                        <label for="inputName">Name</label>
+                        <input id="inputName" name="name" placeholder="Name" type="text" autofocus value="{{ user.name }}"
+                        class="form-control" aria-describedby="nameHelp" required />
+                        <small id="nameHelp" class="form-text text-muted">{{user.errors.emptyName}}</small>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="inputEmail">Email</label>
+                        <input type="email" class="form-control" id="inputEmail" name="email" placeholder="Emal"
+                        value="{{ user.email }}" required aria-describedby="emailHelp">
+                        <small id="emailHelp" class="form-text text-muted">{{user.errors.notEmail}}</small>
+                        <small id="emailHelp" class="form-text text-muted">{{user.errors.repeatedEmail}}</small>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="inputPassword">Password</label>
+                        <input type="password" class="form-control" id="inputPassword" name="password" 
+                        placeholder="Password" required aria-describedby="passwordHelp">
+                        <small id="passwordHelp" class="form-text text-muted">{{user.errors.notSame}}</small>
+                        <small id="passwordHelp" class="form-text text-muted">{{user.errors.char}}</small>
+                        <small id="passwordHelp" class="form-text text-muted">{{user.errors.letter}}</small>
+                        <small id="passwordHelp" class="form-text text-muted">{{user.errors.number}}</small>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="inputPasswordConfirmation">Repeat password</label>
+                        <input type="password" class="form-control" id="inputPasswordConfirmation" name="password_confirmation"
+                        placeholder="Repeat password" required>
+                      </div>
+
+                      <button type="submit" class="btn btn-primary btn-block">Submit</button>
+
+                      <div class="bottom-text">
+                        Do have account? <a href="/login/new">Log in</a>
+                      </div>
+
+                    </form>
+              </section>
+          </section>
+      </section>
+      
+
+
+{% endblock %}

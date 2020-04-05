@@ -1,0 +1,105 @@
+{% extends "baseAfterLogin.html" %}
+
+{% block body %}
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+      
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                <a class="nav-link" href="/start">Home</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/revenue">Add Revenue</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/expense">Add Expense</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Balance Sheet</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Log Out</a>
+                </li>
+            </ul>
+            </div>
+        </div>     
+    </nav>
+    <section class="container-fluid">
+        <section class="row justify-content-center">
+          <section class="col-12 col-sm-6 col-md-6 col-lg-3 title">
+           <h1>Personal Budget</h1>
+          </section>      
+        </section>
+        <section class="row justify-content-center">
+            <section class="col-12 col-sm-8 col-md-6 col-lg-4">
+                <form class="form-container" action="/expense/add" method="post"> 
+                  <div class="formTitle">
+                    <h3>EXPENSE</h3>
+                  </div>
+                    <div class="form-group">
+                      <label for="inputAmount">Amount</label>
+                      <input id="inputAmount" name="amount" placeholder="Amount" type="text" autofocus
+                      class="form-control" aria-describedby="amountHelp" required />
+                      <small id="amountHelp" class="form-text text-muted">{{expense.errors.notDigit}}</small>
+                      <small id="amountHelp" class="form-text text-muted">{{expense.errors.emptyDigit}}</small>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="inputDate">Date</label>
+                      <input  class="form-control" id="datepicker" name="date" placeholder="Date"
+                      required aria-describedby="dateHelp" required>
+                      <small id="dateHelp" class="form-text text-muted">{{expense.errors.emptyDate}}</small>
+                      <small id="dateHelp" class="form-text text-muted">{{expense.errors.wrongDate}}</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentMethod">Payment Method</label>
+                        <select class="form-control" id="paymentMethod" name="payment" required>
+                            <option value="" selected disabled hidden >Choose</option>
+                            {% for payment in payments %}
+                            <option value='{{payment.name}}'>{{payment.name}}</option>
+							{% endfor%}
+                        </select>
+                        <small id="amountHelp" class="form-text text-muted">{{expense.errors.emptyPayment}}</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseCategory">Category</label>
+                        <select class="form-control" id="expenseCategory" name="category" required>
+                            <option value="" selected disabled hidden >Choose</option>
+                            {% for categorie in categories %}
+                            <option value='{{categorie.name}}'>{{categorie.name}}</option>
+							{% endfor%}
+                        </select>
+                        <small id="amountHelp" class="form-text text-muted">{{expense.errors.emptyCategory}}</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="validationTextarea">Comment</label>
+                        <textarea class="form-control" id="validationTextarea"
+                        placeholder="You can add a comment" name="comment"></textarea>
+                        <small id="amountHelp" class="form-text text-muted">{{expense.errors.char}}</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+
+                  </form>
+            </section>
+      </section>
+      {% block footer %}
+      <script>
+      $( function() {
+		$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+	    } );
+      </script>
+  {% endblock %}
+{% endblock %}
+
+
