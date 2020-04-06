@@ -95,4 +95,36 @@ class Revenues extends \Core\Model
 
         return false;
     }
+
+    public static function getRevenues($id_user, $first_day, $last_day)
+    {
+        $sql = 'SELECT * FROM incomes WHERE date_of_income>=:first_day AND date_of_income<=:last_day AND user_id=:id_user';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':id_user', $id_user, PDO::PARAM_INT);
+        $stmt->bindValue(':first_day', $first_day);
+        $stmt->bindValue(':last_day', $last_day);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    } 
+
+    public static function getSumRevenues($id_user, $first_day, $last_day)
+    {
+        $sql = 'SELECT SUM(amount) FROM incomes WHERE date_of_income>=:first_day AND date_of_income<=:last_day AND user_id=:id_user';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':id_user', $id_user, PDO::PARAM_INT);
+        $stmt->bindValue(':first_day', $first_day);
+        $stmt->bindValue(':last_day', $last_day);
+
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
 }

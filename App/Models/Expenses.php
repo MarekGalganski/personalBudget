@@ -114,4 +114,36 @@ class Expenses extends \Core\Model
 
         return false;
     }
+
+    public static function getExpenses($id_user, $first_day, $last_day)
+    {
+        $sql = 'SELECT * FROM expenses WHERE date_of_expense>=:first_day AND date_of_expense<=:last_day AND user_id=:id_user';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':id_user', $id_user, PDO::PARAM_INT);
+        $stmt->bindValue(':first_day', $first_day);
+        $stmt->bindValue(':last_day', $last_day);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    } 
+
+    public static function getSumExpenses($id_user, $first_day, $last_day)
+    {
+        $sql = 'SELECT SUM(amount) FROM expenses WHERE date_of_expense>=:first_day AND date_of_expense<=:last_day AND user_id=:id_user';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':id_user', $id_user, PDO::PARAM_INT);
+        $stmt->bindValue(':first_day', $first_day);
+        $stmt->bindValue(':last_day', $last_day);
+
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
 }

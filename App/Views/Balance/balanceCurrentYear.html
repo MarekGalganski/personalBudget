@@ -1,0 +1,104 @@
+{% extends "baseAfterLogin.html" %}
+
+{% block body %}
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">My Finances</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+      
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                <a class="nav-link" href="/start">Home</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/revenue">Add Revenue</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/expense">Add Expense</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/balance">Balance Sheet</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Log Out</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Period
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="/balance">Current Month</a>
+                      <a class="dropdown-item" href="/Balance/balancePreviousMonth">Previous Month</a>
+                      <a class="dropdown-item" href="/Balance/balanceCurrentYear">Current Year</a>
+                      <a class="dropdown-item" href="/Balance/balanceNonStandard">Non-standard</a>
+                    </div>
+                  </li>
+            </ul>
+            </div>
+        </div>     
+    </nav>
+    <section class="container-fluid">
+        <section class="row justify-content-center">
+          <section class="col-12 col-sm-6 col-md-6 col-lg-3 title">
+           <h1>Current Year</h1>
+          </section>      
+        </section>
+        <section class="row justify-content-center">
+            <section class="col-12 col-sm-6 col-md-6 col-lg-3">
+                <div class="card text-white bg-primary" >
+                    <div class="card-header">Revenues</div>
+                    <div class="card-body">
+                        <h2>{{ sumRevenues }}</h2>
+                        {% for revenue in revenues %}
+                            <li><h5>{{ revenue.amount }} - {{ revenue.income_category_assigned_to_user_id }}
+                                -{{ revenue.date_of_income }}</h5></li>
+                        {% endfor%}
+                    </div>
+            </section>
+            <section class="col-12 col-sm-6 col-md-6 col-lg-3">
+                <div class="card text-white bg-primary" >
+                    <div class="card-header">Expenses</div>
+                    <div class="card-body">
+                        <h2>{{ sumExpenses }}</h2>
+                        {% for expense in expenses %}
+                            <li><h5>{{ expense.amount }} - {{ expense.expense_category_assigned_to_user_id }}
+                                - {{ expense.date_of_expense }}
+                            </h5></li>
+                        {% endfor%}
+                    </div>
+            </section>
+        </section>
+            <section class="row justify-content-center">
+                <section class="col-12 col-sm-6 col-md-6 col-lg-3">
+                    <div class="card text-white bg-primary" >
+                        <div class="card-header">Balance</div>
+                        <div class="card-body">
+                            <h2>{{ balance }}</h2>
+                            {% if balance > 0 %}
+                                <h2>Your balance is positive!</h2>
+                            {% elseif balance == 0 %}
+                                <h2>Your balance is equal!</h2>
+                            {% elseif balance < 0 %}   
+                                <h2>Your balance is negative!</h2>
+                            {% endif %}
+                        </div>
+                </section>
+      </section>
+      {% block footer %}
+      <script>
+      $( function() {
+		$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+	    } );
+      </script>
+  {% endblock %}
+{% endblock %}
+
+

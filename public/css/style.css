@@ -19,3 +19,16 @@ h1{
 .bottom-text{
     margin-top: 10px;
 }
+.card{
+    min-height: 300px;
+    margin-top: 20px;
+}
+.card-body h2{
+    text-align: center;
+}
+.card-header{
+    text-align: center;
+}
+.first{
+    text-align: center;
+}
