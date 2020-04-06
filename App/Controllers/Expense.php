@@ -33,7 +33,7 @@ class Expense extends Authenticated
      */
     public function indexAction()
     {
-            View::renderTemplate('expense/index.html', [
+            View::renderTemplate('Expense/index.html', [
               'categories' => $this->categories,
               'payments' => $this->payments
            ]);
@@ -52,7 +52,7 @@ class Expense extends Authenticated
  
         } else {
 
-           View::renderTemplate('expense/index.html', [
+           View::renderTemplate('Expense/index.html', [
            'categories' => $this->categories,
            'payments' => $this->payments,
            'expense' => $expense

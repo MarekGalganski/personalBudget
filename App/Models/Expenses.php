@@ -95,14 +95,13 @@ class Expenses extends \Core\Model
         if (empty($this->errors)) {
 
             
-            $sql = 'INSERT INTO expenses VALUES (:id, :id_user, :category, :payment, :amount, :date, :comment)';
+            $sql = 'INSERT INTO expenses (user_id, expense_category_assigned_to_user_id,payment_method_assigned_to_user_id, amount, date_of_expense, expense_comment)
+            VALUES (:id_user, :category, :payment, :amount, :date, :comment)';
 
             $db = static::getDB();
             $stmt = $db->prepare($sql);
 
-            $null = 'NULL';
-
-            $stmt->bindValue(':id', $null, PDO::PARAM_STR);
+            
             $stmt->bindValue(':id_user', $_SESSION['user_id'], PDO::PARAM_INT);
             $stmt->bindValue(':category', $this->category, PDO::PARAM_STR);
             $stmt->bindValue(':payment', $this->payment, PDO::PARAM_STR);

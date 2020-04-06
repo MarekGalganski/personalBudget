@@ -32,7 +32,7 @@ class Revenue extends Authenticated
      */
     public function indexAction()
     {
-            View::renderTemplate('revenue/index.html', [
+            View::renderTemplate('Revenue/index.html', [
                 'categories' => $this->categories
             ]);
     }
@@ -50,7 +50,7 @@ class Revenue extends Authenticated
  
          } else {
 
-            View::renderTemplate('revenue/index.html', [
+            View::renderTemplate('Revenue/index.html', [
             'categories' => $this->categories,
             'revenue' => $revenue
             ]);

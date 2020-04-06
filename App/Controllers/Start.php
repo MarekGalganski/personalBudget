@@ -29,7 +29,7 @@ class Start extends Authenticated
      */
     public function indexAction()
     {
-            View::renderTemplate('start/index.html');
+            View::renderTemplate('Start/index.html');
     }
 
     /**

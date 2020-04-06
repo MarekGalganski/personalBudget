@@ -78,14 +78,12 @@ class Revenues extends \Core\Model
         if (empty($this->errors)) {
 
             
-            $sql = 'INSERT INTO incomes VALUES (:id,:id_user,:category,:amount,:date,:comment)';
+            $sql = 'INSERT INTO incomes (user_id, income_category_assigned_to_user_id, amount, date_of_income, income_comment)
+                     VALUES (:id_user,:category,:amount,:date,:comment)';
 
             $db = static::getDB();
             $stmt = $db->prepare($sql);
 
-            $null = 'NULL';
-
-            $stmt->bindValue(':id', $null, PDO::PARAM_STR);
             $stmt->bindValue(':id_user', $_SESSION['user_id'], PDO::PARAM_INT);
             $stmt->bindValue(':category', $this->category, PDO::PARAM_STR);
             $stmt->bindValue(':amount', $this->amount, PDO::PARAM_STR);
