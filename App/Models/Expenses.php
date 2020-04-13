@@ -18,7 +18,7 @@ class Expenses extends \Core\Model
 
     public static function getCategories($id_user)
     {
-        $sql = 'SELECT name FROM expenses_category_assigned_to_users WHERE user_id=:id';
+        $sql = 'SELECT * FROM expenses_category_assigned_to_users WHERE user_id=:id';
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
@@ -32,7 +32,7 @@ class Expenses extends \Core\Model
 
     public static function getPayments($id_user)
     {
-        $sql = 'SELECT name FROM payment_methods_assigned_to_users WHERE user_id=:id ';
+        $sql = 'SELECT * FROM payment_methods_assigned_to_users WHERE user_id=:id ';
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);

@@ -97,6 +97,43 @@ class Balance extends Authenticated
             View::renderTemplate('Balance/balanceNonStandard.html');
     }
 
+    public function addDateAction()
+    {
+            $first_day = $_POST['date1'];
+            $last_day = $_POST['date2'];
+
+            if((! Revenues::validateDate($first_day)) || (! Revenues::validateDate($last_day))){
+
+                $error = 'Please provide the date in "YYYY-MM-dd" .';
+
+                View::renderTemplate('Balance/balanceNonStandard.html', [
+                    'error' => $error
+                ]);
+               
+            }else{
+
+                $revenues = Revenues::getRevenues($_SESSION['user_id'], $first_day, $last_day);
+                $expenses = Expenses::getExpenses($_SESSION['user_id'], $first_day, $last_day);
+
+                $sumRevenues = Revenues::getSumRevenues($_SESSION['user_id'], $first_day, $last_day);
+                $sumExpenses = Expenses::getSumExpenses($_SESSION['user_id'], $first_day, $last_day);
+
+                $balance = $sumRevenues-$sumExpenses;
+
+                View::renderTemplate('Balance/balanceNonStandard.html', [
+                    'revenues' => $revenues,
+                    'expenses' => $expenses,
+                    'sumRevenues' => $sumRevenues,
+                    'sumExpenses' => $sumExpenses,
+                    'balance' => $balance,
+                    'first_day' => $first_day,
+                    'last_day' => $last_day
+                ]);
+            }
+
+    }
+
+
     
 
 }

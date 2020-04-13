@@ -25,7 +25,7 @@
                     <a class="nav-link" href="/balance">Balance Sheet</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Settings</a>
+                    <a class="nav-link" href="/settings">Settings</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">Log Out</a>
@@ -53,13 +53,75 @@
         </section>
         <section class="row justify-content-center">
             <section class="col-12 col-sm-8 col-md-6 col-lg-4">
-                
+                <form action="/balance/addDate" method="post">
+                    <div class="form-row align-items-center">
+                      <div class="col-auto">
+                        <input type="text" class="form-control mb-2 datepicker" name="date1" placeholder="From">
+                        <small class="form-text text-muted">{{error}}</small>
+                      </div>
+                      <div class="col-auto">
+                        <input type="text" class="form-control mb-2 datepicker" name="date2" placeholder="To">
+                        <small class="form-text text-muted">{{error}}</small>
+                      </div>
+                      <div class="col-auto">
+                        <button type="submit" class="btn btn-primary mb-2">Submit</button>
+                      </div>
+                    </div>
+                  </form>   
             </section>
       </section>
+      <section class="row justify-content-center">
+            {% if first_day is defined %}
+            <section class="col-12 col-sm-6 col-md-6 col-lg-4 title">
+                <h1>{{first_day}} -&nbsp;{{ last_day}}</h1>
+            </section>  
+            {% endif %}    
+      </section>
+      <section class="row justify-content-center">
+        <section class="col-12 col-sm-6 col-md-6 col-lg-3">
+            <div class="card text-white bg-primary" >
+                <div class="card-header">Revenues</div>
+                <div class="card-body">
+                    <h2>{{ sumRevenues }}</h2>
+                    {% for revenue in revenues %}
+                        <li><h5>{{ revenue.amount }} - {{ revenue.income_category_assigned_to_user_id }}
+                            -{{ revenue.date_of_income }}</h5></li>
+                    {% endfor%}
+                </div>
+        </section>
+        <section class="col-12 col-sm-6 col-md-6 col-lg-3">
+            <div class="card text-white bg-primary" >
+                <div class="card-header">Expenses</div>
+                <div class="card-body">
+                    <h2>{{ sumExpenses }}</h2>
+                    {% for expense in expenses %}
+                        <li><h5>{{ expense.amount }} - {{ expense.expense_category_assigned_to_user_id }}
+                            - {{ expense.date_of_expense }}
+                        </h5></li>
+                    {% endfor%}
+                </div>
+        </section>
+    </section>
+        <section class="row justify-content-center">
+            <section class="col-12 col-sm-6 col-md-6 col-lg-3">
+                <div class="card text-white bg-primary" >
+                    <div class="card-header">Balance</div>
+                    <div class="card-body">
+                        <h2>{{ balance }}</h2>
+                        {% if balance > 0 %}
+                            <h2>Your balance is positive!</h2>
+                        {% elseif balance == 0 %}
+                            <h2>Your balance is equal!</h2>
+                        {% elseif balance < 0 %}   
+                            <h2>Your balance is negative!</h2>
+                        {% endif %}
+                    </div>
+            </section>
+  </section>
       {% block footer %}
       <script>
       $( function() {
-		$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+		$( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
 	    } );
       </script>
   {% endblock %}

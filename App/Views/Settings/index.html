@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Personal Budget</title>
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+    {% for message in flash_messages %}
+        <div class="alert alert-{{ message.type }} alert-dismissible" id="role" role="alert" >
+            {{ message.body }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+    
+    <section class="container-fluid">
+        <section class="row ">
+          <section class="col-12 col-sm-2 justify-content-center">
+              <div>
+                  <a href="/start">Budget</a>
+              </div>
+          </section>      
+        </section>
+        <section class="row ">
+            <section class="col-12 col-sm-2">
+                <div class="nav flex-column nav-pills"  role="tablist" aria-orientation="vertical">
+                    <a class="nav-link ok"  href="/revenue" role="tab" aria-controls="v-pills-home" aria-selected="true">Add Revenue</a>
+                    <a class="nav-link"  href="/expense" role="tab" aria-controls="v-pills-profile" aria-selected="false">Add Expense</a>
+                    <a class="nav-link"  href="/balance" role="tab" aria-controls="v-pills-messages" aria-selected="false">Balance</a>
+                    <a class="nav-link active"  href="/settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
+                    <a class="nav-link" href="/logout" role="tab" aria-controls="v-pills-settings" aria-selected="false">Log Out</a>
+                  </div>
+            </section>
+            <section class="col-12 col-sm-10">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" class="nav-link" href="#collapse1" role="tab">Revenue Categories</a>
+                        </h4>
+                      </div>
+                      <div id="collapse1" class="panel-collapse collapse">
+                        <ul class="list-group">
+                          <table class="table" style="width: 100%;">
+                            <thead>
+                              <tr>
+                                <th scope="col" style="width: 90%;">Name</th>
+                                <th scope="col" style="width: 10%;">Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                          {% for revenueCategory in revenueCategories %}
+                                  
+                            <tr>
+                              <td scope="row">
+                                {{revenueCategory.name}}
+                                <input type="hidden" id="id_nr" value="{{ revenueCategory.id }}" name="id_nr" />
+                              </td>
+                              <td><button type="button" class="btn btn-danger deleteRevenueBtn">Delete</button></td>
+                            </tr>
+                          
+                          {% endfor%}
+                        </tbody>
+                        </table>
+
+                        </ul>
+                        <button type="button" class="btn btn-primary btn-block addRevenuebnt">Add Category</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="panel-group">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" class="nav-link" href="#collapse2" role="tab">Expense Categories</a>
+                        </h4>
+                      </div>
+                      <div id="collapse2" class="panel-collapse collapse">
+                        <ul class="list-group">
+                          <table class="table" style="width: 100%;">
+                            <thead>
+                              <tr>
+                                <th scope="col" style="width: 30%;">Name</th>
+                                <th scope="col" style="width: 50%;">Limit</th>
+                                <th scope="col" style="width: 10%;">Edit</th>
+                                <th scope="col" style="width: 10%;">Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                          {% for expenseCategory in expenseCategories %}
+                                  
+                            <tr>
+                              <td scope="row">{{expenseCategory.name}}</td>
+                              <td scope="row">{{expenseCategory.category_limit}}</td>
+                              <td>
+                                <button type="button" class="btn btn-success editExpenseBtn">Edit</span></button>
+                                <input type="hidden" id="id_nr_expense" value="{{ expenseCategory.id }}" name="id_nr_expense" />
+                              </td>
+                              <td><button type="button" class="btn btn-danger deleteExpenseBtn">Delete</button></td>
+                            </tr>
+                          
+                          {% endfor%}
+                        </tbody>
+                        </table>
+
+                        </ul>
+                        <button type="button" class="btn btn-primary btn-block addExpensebnt">Add Category</button>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="panel-group">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" class="nav-link" href="#collapse3" role="tab">Payment Methods</a>
+                        </h4>
+                      </div>
+                      <div id="collapse3" class="panel-collapse collapse">
+                        <ul class="list-group">
+                          {% for payment in payments %}
+                            <li class="list-group-item">{{payment.name}}</li>
+							            {% endfor%}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="panel-group">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" class="nav-link" href="#collapse4" role="tab">User</a>
+                        </h4>
+                      </div>
+                      <div id="collapse4" class="panel-collapse collapse">
+                        <ul class="list-group">
+                          <li class="list-group-item">One</li>
+                          <li class="list-group-item">Two</li>
+                          <li class="list-group-item">Three</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+            </section>
+      </section>
+
+      <div class="modal" id="editExpense" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Expense Category</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="/Settings/editExpenseCategory" method="post">
+                <div class="form-group">
+                  <label for="expense_name_edit">Name Category</label>
+                  <input type="text" class="form-control" id="expense_name_edit" name="expense_name_edit"
+                  required placeholder="Enter Name">
+                  <small id="emailHelp" class="form-text text-muted"></small>
+                </div>
+                <div class="form-group">
+                  <label for="expense_limit_edit">Category Limit(optional)</label>
+                  <input type="text" class="form-control" id="expense_limit_edit" name="expense_limit_edit"
+                  placeholder="Enter Limit">
+                  <input type="hidden" id="edit_expense_id" name="edit_expense_id"/>
+                </div>       
+            </div>
+            <div class="modal-footer">         
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Edit Category</button>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal" id="addExpense" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Expense Category</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="/Settings/addExpenseCategory" method="post">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Name Category</label>
+                  <input type="text" class="form-control" id="exampleInputEmail1" name="nameCategory"
+                  required placeholder="Enter Name">
+                  <small id="emailHelp" class="form-text text-muted"></small>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Category Limit(optional)</label>
+                  <input type="text" class="form-control" id="exampleInputPassword1" name="limitCategory"
+                  placeholder="Enter Limit">
+                </div>       
+            </div>
+            <div class="modal-footer">         
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add Category</button>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="modal fade" id="deleteExpenseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Sure to delete?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-footer">
+              <form action="/Settings/deleteExpenseCategory" method="post">
+                <input type="hidden" id="delete_expense_id" name="delete_expense_id"/>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" name="delete" class="btn btn-primary">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="deleteRevenueModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Sure to delete?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-footer">
+              <form action="/Settings/deleteRevenueCategory" method="post">
+                <input type="hidden" id="delete_revenue_id" name="delete_revenue_id"/>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" name="delete" class="btn btn-primary">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="addRevenue" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add Revenue Category</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="/Settings/addRevenueCategory" method="post">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Name Category</label>
+                  <input type="text" class="form-control" name="newCategory" aria-describedby="emailHelp" placeholder="Enter Name">
+                  <small id="emailHelp" class="form-text text-muted"></small>
+                </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add Category</button>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+      <script>
+        $(document).ready(function() {
+
+          const example = document.getElementById('role')
+          const time = 2500
+          
+          setTimeout(() => {
+            example.style.display = 'none'
+          }, time)
+
+            $('.deleteRevenueBtn').on('click', function() {
+
+                $('#deleteRevenueModal').modal('show');
+
+                var id_category = $(this).closest('tr').find("input[name='id_nr']").val();
+
+                $('#delete_revenue_id').val(id_category);
+                
+
+            });
+
+            $('.addRevenuebnt').on('click', function() {
+
+                $('#addRevenue').modal('show');
+
+            });
+
+            $('.addExpensebnt').on('click', function() {
+
+              $('#addExpense').modal('show');
+
+            });
+
+              $('.editExpenseBtn').on('click', function() {
+
+                $('#editExpense').modal('show');
+
+                $tr = $(this).closest('tr');
+
+                var data = $tr.children("td").map(function() {
+                  return $(this).text();
+                }).get();
+
+                $('#expense_name_edit').val(data[0]);
+
+                var id_expense_category = $(this).closest('tr').find("input[name='id_nr_expense']").val();
+
+                $('#edit_expense_id').val(id_expense_category);
+
+              });
+
+            $('.deleteExpenseBtn').on('click', function() {
+
+               $('#deleteExpenseModal').modal('show');
+
+                var id_expense_category = $(this).closest('tr').find("input[name='id_nr_expense']").val();
+
+                $('#delete_expense_id').val(id_expense_category);
+
+            });
+
+          });
+
+      </script>
+</body>
+</html>

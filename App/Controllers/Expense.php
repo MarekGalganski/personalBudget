@@ -17,6 +17,7 @@ class Expense extends Authenticated
 {
 
    public $categories;
+   public $payments;
 
     protected function before()
     {
