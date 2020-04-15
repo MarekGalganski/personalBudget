@@ -149,7 +149,19 @@ class User extends \Core\Model
 
         return false;
     }
+       
+    public static function authenticatePasswordbById($id, $password)
+    {
+        $user = static::findByID($id);
 
+        if ($user) {
+            if (password_verify($password, $user->password_hash)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
    
     public static function findByID($id)
     {
@@ -194,6 +206,7 @@ class User extends \Core\Model
 
         return $stmt->execute();
     }
+
     public static function assignDefaultExpensesToUser($email)
     {
         $user = static::findByEmail($email);

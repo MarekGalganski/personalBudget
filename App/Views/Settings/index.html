@@ -11,6 +11,7 @@
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
+  
 
     {% for message in flash_messages %}
         <div class="alert alert-{{ message.type }} alert-dismissible" id="role" role="alert" >
@@ -23,23 +24,23 @@
     
     <section class="container-fluid">
         <section class="row ">
-          <section class="col-12 col-sm-2 justify-content-center">
-              <div>
-                  <a href="/start">Budget</a>
+          <section class="col-12 col-sm-2">
+              <div class="logo">
+                  <a href="/start"><h2>My Budget</h2></a>
               </div>
           </section>      
         </section>
         <section class="row ">
             <section class="col-12 col-sm-2">
-                <div class="nav flex-column nav-pills"  role="tablist" aria-orientation="vertical">
-                    <a class="nav-link ok"  href="/revenue" role="tab" aria-controls="v-pills-home" aria-selected="true">Add Revenue</a>
+                <div class="nav flex-column nav-pills navigation"  role="tablist" aria-orientation="vertical">
+                    <a class="nav-link "  href="/revenue" role="tab" aria-controls="v-pills-home" aria-selected="true">Add Revenue</a>
                     <a class="nav-link"  href="/expense" role="tab" aria-controls="v-pills-profile" aria-selected="false">Add Expense</a>
                     <a class="nav-link"  href="/balance" role="tab" aria-controls="v-pills-messages" aria-selected="false">Balance</a>
                     <a class="nav-link active"  href="/settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
                     <a class="nav-link" href="/logout" role="tab" aria-controls="v-pills-settings" aria-selected="false">Log Out</a>
                   </div>
             </section>
-            <section class="col-12 col-sm-10">
+            <section class="col-12 col-sm-10 settings">
                 <div class="panel-group">
                     <div class="panel panel-default">
                       <div class="panel-heading">
@@ -60,11 +61,11 @@
                           {% for revenueCategory in revenueCategories %}
                                   
                             <tr>
-                              <td scope="row">
-                                {{revenueCategory.name}}
+                              <td scope="row">{{revenueCategory.name}}</td>
+                              <td>
                                 <input type="hidden" id="id_nr" value="{{ revenueCategory.id }}" name="id_nr" />
+                                <button type="button" class="btn btn-danger deleteRevenueBtn">Delete</button>
                               </td>
-                              <td><button type="button" class="btn btn-danger deleteRevenueBtn">Delete</button></td>
                             </tr>
                           
                           {% endfor%}
@@ -107,7 +108,7 @@
                               </td>
                               <td><button type="button" class="btn btn-danger deleteExpenseBtn">Delete</button></td>
                             </tr>
-                          
+             
                           {% endfor%}
                         </tbody>
                         </table>
@@ -116,7 +117,33 @@
                         <button type="button" class="btn btn-primary btn-block addExpensebnt">Add Category</button>
                       </div>
                     </div>
+                    <div class="modal fade" id="addRevenue" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Add Revenue Category</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form action="/Settings/addRevenueCategory" method="post">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">Name Category</label>
+                                  <input type="text" class="form-control" name="newCategory" required placeholder="Enter Name">
+                                  <small id="emailHelp" class="form-text text-muted"></small>
+                                </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-primary">Add Category</button>
+                            </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                   </div>
+
+                  
 
 
                   <div class="panel-group">
@@ -128,13 +155,34 @@
                       </div>
                       <div id="collapse3" class="panel-collapse collapse">
                         <ul class="list-group">
+                          <table class="table" style="width: 100%;">
+                            <thead>
+                              <tr>
+                                <th scope="col" style="width: 90%;">Name</th>
+                                <th scope="col" style="width: 10%;">Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
                           {% for payment in payments %}
-                            <li class="list-group-item">{{payment.name}}</li>
-							            {% endfor%}
+                                  
+                            <tr>
+                              <td scope="row">
+                                {{payment.name}}
+                                <input type="hidden" id="id_nr_payment" value="{{ payment.id }}" name="id_nr_payment" />
+                              </td>
+                              <td><button type="button" class="btn btn-danger deletePaymentBtn">Delete</button></td>
+                            </tr>
+                          
+                          {% endfor%}
+                        </tbody>
+                        </table>
+
                         </ul>
+                        <button type="button" class="btn btn-primary btn-block addPaymentBnt">Add Payment</button>
                       </div>
                     </div>
                   </div>
+
                   <div class="panel-group">
                     <div class="panel panel-default">
                       <div class="panel-heading">
@@ -143,18 +191,114 @@
                         </h4>
                       </div>
                       <div id="collapse4" class="panel-collapse collapse">
-                        <ul class="list-group">
-                          <li class="list-group-item">One</li>
-                          <li class="list-group-item">Two</li>
-                          <li class="list-group-item">Three</li>
-                        </ul>
+                        <div >
+                            <button type="button" style="margin: 5px;" class="btn btn-primary btn-lg btn-block changeNameBtn">Change Name</button>  
+
+                            <div class="modal fade" id="changeName" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Change Name</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <form action="/Settings/changeName" method="post">
+                                      <div class="form-group">
+                                        <label for="exampleInputEmail1">New Name</label>
+                                        <input type="text" class="form-control" name="newName" required placeholder="Enter Name">
+                                        <small id="emailHelp" class="form-text text-muted"></small>
+                                      </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Change Name</button>
+                                  </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>             
+                        </div>   
+
+                        <div >
+                            <button type="button" style="margin: 5px;" class="btn btn-primary btn-lg btn-block changeEmailBtn">Change Email</button>
+
+                            <div class="modal fade" id="changeEmail" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Change Email</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <form action="/Settings/changeEmail" method="post" id="changeEmailForm">
+                                      <div class="form-group">
+                                        <label for="exampleInputEmail1">New Email</label>
+                                        <input type="text" class="form-control" name="newEmail" required placeholder="Enter Email">
+                                        <small id="emailHelp" class="form-text text-muted"></small>
+                                      </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Change Email</button>
+                                  </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+
+                        
+
+                        <div >
+                          <button type="button" style="margin: 5px;" class="btn btn-primary btn-lg btn-block changePasswordBtn">Change Password</button>  
+
+                          <div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Change Password</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  <form action="/Settings/changePassword" method="post" id="changePasswordForm">
+                                    <div class="form-group">
+                                      <label for="oldPassword">Old Password</label>
+                                      <input type="password" id="oldPassword" class="form-control" name="oldPassword" required placeholder="Enter Old Password">
+                                      <small class="form-text text-muted"></small>
+                                      <label for="newPassword1">New Password</label>
+                                      <input type="password" class="form-control" id="newPassword1" name="newPassword1" required placeholder="Enter New Password">
+                                      <small id="emailHelp" class="form-text text-muted"></small>
+                                      <label for="newPassword2">Repeat New Password</label>
+                                      <input type="password" class="form-control" id="newPassword2" name="newPassword2" required placeholder="Repeat New Password">
+                                      <small id="emailHelp" class="form-text text-muted"></small>
+                                    </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button type="submit" class="btn btn-primary">Change Password</button>
+                                </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                      </div>   
+                        </div>
+                        
+                        
+                    
                       </div>
                     </div>
                   </div>
             </section>
       </section>
 
-      <div class="modal" id="editExpense" tabindex="-1" role="dialog">
+      
+
+
+      <div class="modal" id="editExpense" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -164,7 +308,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <form action="/Settings/editExpenseCategory" method="post">
+              <form action="/Settings/editExpenseCategory" method="post" id="editExpenseForm">
                 <div class="form-group">
                   <label for="expense_name_edit">Name Category</label>
                   <input type="text" class="form-control" id="expense_name_edit" name="expense_name_edit"
@@ -187,7 +331,27 @@
         </div>
       </div>
 
-      <div class="modal" id="addExpense" tabindex="-1" role="dialog">
+      <div class="modal fade" id="deleteExpenseModal" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Sure to delete?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-footer">
+              <form action="/Settings/deleteExpenseCategory" method="post">
+                <input type="hidden" id="delete_expense_id" name="delete_expense_id"/>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" name="delete" class="btn btn-primary">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal" id="addExpense" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -197,7 +361,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <form action="/Settings/addExpenseCategory" method="post">
+              <form action="/Settings/addExpenseCategory" method="post" id="addExpenseForm">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Name Category</label>
                   <input type="text" class="form-control" id="exampleInputEmail1" name="nameCategory"
@@ -219,28 +383,7 @@
         </div>
       </div>
 
-
-      <div class="modal fade" id="deleteExpenseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Sure to delete?</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-footer">
-              <form action="/Settings/deleteExpenseCategory" method="post">
-                <input type="hidden" id="delete_expense_id" name="delete_expense_id"/>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" name="delete" class="btn btn-primary">Delete</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal fade" id="deleteRevenueModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="deleteRevenueModal" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -260,25 +403,45 @@
         </div>
       </div>
 
-      <div class="modal fade" id="addRevenue" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="deletePaymentModal" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Add Revenue Category</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Sure to delete?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-footer">
+              <form action="/Settings/deletePaymentMethod" method="post">
+                <input type="hidden" id="delete_payment_id" name="delete_payment_id"/>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" name="delete" class="btn btn-primary">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="addPayment" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add Payment Method</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              <form action="/Settings/addRevenueCategory" method="post">
+              <form action="/Settings/addPaymentMethod" method="post">
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Name Category</label>
-                  <input type="text" class="form-control" name="newCategory" aria-describedby="emailHelp" placeholder="Enter Name">
+                  <label for="exampleInputEmail1">Name Method</label>
+                  <input type="text" class="form-control" name="newMethod" required placeholder="Enter Method">
                   <small id="emailHelp" class="form-text text-muted"></small>
                 </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Add Category</button>
+              <button type="submit" class="btn btn-primary">Add Method</button>
             </form>
             </div>
           </div>
@@ -286,9 +449,15 @@
       </div>
 
       
-      <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" 
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
       <script>
         $(document).ready(function() {
 
@@ -303,12 +472,23 @@
 
                 $('#deleteRevenueModal').modal('show');
 
-                var id_category = $(this).closest('tr').find("input[name='id_nr']").val();
+                var id_category= $(this).closest('tr').find("input[name='id_nr']").val();
 
                 $('#delete_revenue_id').val(id_category);
                 
-
             });
+
+
+            $('.deletePaymentBtn').on('click', function() {
+
+              $('#deletePaymentModal').modal('show');
+
+              var id_payment = $(this).closest('tr').find("input[name='id_nr_payment']").val();
+
+              $('#delete_payment_id').val(id_payment);
+
+              });
+
 
             $('.addRevenuebnt').on('click', function() {
 
@@ -316,42 +496,142 @@
 
             });
 
+
+            $('.addPaymentBnt').on('click', function() {
+
+              $('#addPayment').modal('show');
+
+            });
+
+
             $('.addExpensebnt').on('click', function() {
 
               $('#addExpense').modal('show');
 
             });
 
-              $('.editExpenseBtn').on('click', function() {
 
-                $('#editExpense').modal('show');
+            $('.editExpenseBtn').on('click', function() {
 
-                $tr = $(this).closest('tr');
+              $('#editExpense').modal('show');
 
-                var data = $tr.children("td").map(function() {
-                  return $(this).text();
-                }).get();
+              $tr = $(this).closest('tr');
 
-                $('#expense_name_edit').val(data[0]);
+              var data = $tr.children("td").map(function() {
+                return $(this).text();
+              }).get();
 
-                var id_expense_category = $(this).closest('tr').find("input[name='id_nr_expense']").val();
+              $('#expense_name_edit').val(data[0]);
 
-                $('#edit_expense_id').val(id_expense_category);
+              var id_expense_category = $(this).closest('tr').find("input[name='id_nr_expense']").val();
 
-              });
+              $('#edit_expense_id').val(id_expense_category);
+
+            });
+
 
             $('.deleteExpenseBtn').on('click', function() {
 
-               $('#deleteExpenseModal').modal('show');
+              $('#deleteExpenseModal').modal('show');
 
-                var id_expense_category = $(this).closest('tr').find("input[name='id_nr_expense']").val();
+              var id_expense_category = $(this).closest('tr').find("input[name='id_nr_expense']").val();
 
-                $('#delete_expense_id').val(id_expense_category);
+              $('#delete_expense_id').val(id_expense_category);
+
+            });
+
+            $('.changeNameBtn').on('click', function() {
+
+                $('#changeName').modal('show');
+
+            });
+
+            $('.changeEmailBtn').on('click', function() {
+
+              $('#changeEmail').modal('show');
+
+            });
+
+            $('.changePasswordBtn').on('click', function() {
+
+              $('#changePassword').modal('show');
 
             });
 
           });
 
+      </script>
+      <script>
+
+        $.validator.addMethod('validPassword',
+          function(value, element, param) {
+            if(value != '') {
+              if(value.match(/.*[a-z]+.*/i) == null) {
+                return false;
+              }
+              if(value.match(/.*\d+.*/) == null) {
+                return false;
+              }
+            }
+            return true;
+          },
+          'Must contain at least one letter and one number'
+        );
+
+        $(document).ready(function() {
+    
+          $('#addExpenseForm').validate({
+              rules: {
+                  nameCategory: 'required',
+                  limitCategory: {
+                      number: true
+                  }
+                  
+              }
+          });
+
+          $('#editExpenseForm').validate({
+              rules: {
+                expense_name_edit: 'required',
+                expense_limit_edit: {
+                      number: true
+                  }
+                  
+              }
+          });
+
+          $('#changeEmailForm').validate({
+              rules: {
+                newEmail: {
+                  required: true,
+                  email: true,
+                  remote: '/account/validate-email-edit'
+                  }
+              },
+              messages: {
+                newEmail: {
+                  remote: 'Email already taken.'
+              }
+          }
+          });
+
+          $('#changePasswordForm').validate({
+              rules: {
+                oldPassword: {
+                  required: true,
+                },
+                newPassword1: {
+                  required: true,
+                  minlength: 6,
+                  validPassword: true
+                },
+                newPassword2: {
+                  equalTo: '#newPassword1'
+                }       
+              }
+          });
+
+        });
       </script>
 </body>
 </html>

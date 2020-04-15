@@ -65,6 +65,43 @@ class ChangeData extends \Core\Model
         return $stmt->fetch();
     }
 
+    public static function addPaymentMethod($newMethod)
+    {
+        
+            $sql = 'INSERT INTO payment_methods_assigned_to_users (user_id, name)
+            VALUES (:user_id, :name)';
+
+            $db = static::getDB();
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+            $stmt->bindValue(':name', $newMethod, PDO::PARAM_STR);
+
+            return $stmt->execute();
+        
+    }
+
+    public static function methodPaymentExists($method)
+    {
+        return static::findByMethodPayment($method) !== false;
+    }
+  
+    public static function findByMethodPayment($method)
+    {
+        $sql = 'SELECT * FROM payment_methods_assigned_to_users WHERE name = :method AND user_id=:user_id';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':method', $method, PDO::PARAM_STR);
+        $stmt->bindValue(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+
+        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+
+        $stmt->execute();
+
+        return $stmt->fetch();
+    }
+
     public static function addExpenseCategory($newCategory)
     {
         
@@ -169,6 +206,21 @@ class ChangeData extends \Core\Model
         }
 
         return false;
+    }
+
+    public static function editPassword($password)
+    {
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+        $sql = 'UPDATE users SET password_hash=:password_hash WHERE id=:id_user';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':id_user', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':password_hash', $password_hash, PDO::PARAM_STR);
+
+        $stmt->execute();
     }
 
 }

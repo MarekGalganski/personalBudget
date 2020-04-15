@@ -24,4 +24,12 @@ class Account extends \Core\Controller
         header('Content-Type: application/json');
         echo json_encode($is_valid);
     }
+
+    public function validateEmailEditAction()
+    {
+        $is_valid = ! User::emailExists($_GET['newEmail']);
+
+        header('Content-Type: application/json');
+        echo json_encode($is_valid);
+    }
 }

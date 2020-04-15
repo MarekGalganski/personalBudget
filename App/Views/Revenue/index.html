@@ -42,7 +42,7 @@
         </section>
         <section class="row justify-content-center">
             <section class="col-12 col-sm-8 col-md-6 col-lg-4">
-                <form class="form-container" action="/revenue/add" method="post"> 
+                <form class="form-container" action="/revenue/add" method="post" id="revenueForm"> 
                   <div class="formTitle">
                     <h3>REVENUE</h3>
                   </div>
@@ -88,6 +88,20 @@
       $( function() {
 		$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
 	    } );
+      </script>
+      <script>
+        $(document).ready(function() {
+
+            $('#revenueForm').validate({
+                rules: {
+                    amount: {
+                        required: true,
+                        number: true
+                    }  
+                }
+               
+            });
+        });
       </script>
   {% endblock %}
 {% endblock %}

@@ -9,6 +9,7 @@ use \App\Models\ChangeData;
 use \App\Models\Revenues;
 use \App\Models\Expenses;
 use \App\Models\Delete;
+use \App\Models\User;
 
 /**
  * Items controller (example)
@@ -122,32 +123,11 @@ class Settings extends Authenticated
 
     public function changeEmailAction()
     {
-        $email = $_POST['email'];
+        $email = $_POST['newEmail'];
 
         if((ChangeData::validateEmail($email)) || ($email == '')){
 
-            $errorEmail = "Invalid email or already taken.";
-
-            View::renderTemplate('Settings/index.html', [
-                'errorEmail' => $errorEmail
-            ]);
-
-        } else {
-
-            ChangeData::changeEmail($email);
-
-            Flash::addMessage('Email has been changed.');
-
-            $this->redirect('/Settings');
-        }
-        
-    }
-
-    public function addRevenueCategoryAction()
-    {
-        if(ChangeData::revenueCategoryExists($_POST['newCategory']))
-        {
-            Flash::addMessage('Something went wrong, try again.', Flash::WARNING);
+            Flash::addMessage('Invalid email or already taken.', Flash::WARNING);
 
             $this->before();
 
@@ -156,6 +136,37 @@ class Settings extends Authenticated
                 'expenseCategories' => $this->expenseCategories,
                 'payments' => $this->payments
             ]);
+
+        } else {
+            ChangeData::changeEmail($email);
+
+            Flash::addMessage('Email has been changed.');
+
+            $this->before();
+
+            View::renderTemplate('Settings/index.html', [
+                'revenueCategories' => $this->revenueCategories,
+                'expenseCategories' => $this->expenseCategories,
+                'payments' => $this->payments
+            ]);
+        }
+        
+    }
+
+    public function addRevenueCategoryAction()
+    {
+        if(ChangeData::revenueCategoryExists($_POST['newCategory']))
+        {
+            Flash::addMessage('This category already exists, try again.', Flash::WARNING);
+
+            $this->before();
+
+            View::renderTemplate('Settings/index.html', [
+                'revenueCategories' => $this->revenueCategories,
+                'expenseCategories' => $this->expenseCategories,
+                'payments' => $this->payments
+            ]);
+
         } else {
 
             ChangeData::addRevenueCategory($_POST['newCategory']);
@@ -177,7 +188,7 @@ class Settings extends Authenticated
     {
         if(ChangeData::expenseCategoryExists($_POST['nameCategory']))
         {
-            Flash::addMessage('Something went wrong, try again.', Flash::WARNING);
+            Flash::addMessage('This category already exists, try again.', Flash::WARNING);
 
             $this->before();
 
@@ -212,6 +223,128 @@ class Settings extends Authenticated
                 'expenseCategories' => $this->expenseCategories,
                 'payments' => $this->payments
             ]);
+
+        }
+    }
+
+    public function deletePaymentMethodAction()
+    {
+        
+        Delete::deletePaymentMethod($_POST['delete_payment_id']);
+
+        Flash::addMessage('Method has been deleted.');
+
+        $this->before();
+
+        View::renderTemplate('Settings/index.html', [
+            'revenueCategories' => $this->revenueCategories,
+            'expenseCategories' => $this->expenseCategories,
+            'payments' => $this->payments
+        ]);
+
+    }
+
+    public function addPaymentMethodAction()
+    {
+        
+        if(ChangeData::methodPaymentExists($_POST['newMethod'])){
+
+            Flash::addMessage('This method already exists, try again.', Flash::WARNING);
+
+            $this->before();
+
+            View::renderTemplate('Settings/index.html', [
+                'revenueCategories' => $this->revenueCategories,
+                'expenseCategories' => $this->expenseCategories,
+                'payments' => $this->payments
+            ]);
+
+        } else {
+          
+            ChangeData::addPaymentMethod($_POST['newMethod']);
+
+            Flash::addMessage('Method has been added.');
+
+            $this->before();
+
+            View::renderTemplate('Settings/index.html', [
+                'revenueCategories' => $this->revenueCategories,
+                'expenseCategories' => $this->expenseCategories,
+                'payments' => $this->payments
+            ]);
+
+        }
+    }
+
+    public function changeNameAction()
+    {
+        if (empty($_POST['newName'])) {
+
+            Flash::addMessage('Please provide the name, try again.', Flash::WARNING);
+
+            $this->before();
+
+            View::renderTemplate('Settings/index.html', [
+                'revenueCategories' => $this->revenueCategories,
+                'expenseCategories' => $this->expenseCategories,
+                'payments' => $this->payments
+            ]);
+        } else {
+
+            ChangeData::changeName($_POST['newName']);
+
+            Flash::addMessage('Name has been changed.');
+
+            $this->before();
+
+            View::renderTemplate('Settings/index.html', [
+                'revenueCategories' => $this->revenueCategories,
+                'expenseCategories' => $this->expenseCategories,
+                'payments' => $this->payments
+            ]);
+        }
+    }
+
+    public function changePasswordAction()
+    {
+        if(User::authenticatePasswordbById($_SESSION['user_id'], $_POST['oldPassword'])){
+            
+            if($_POST['newPassword1'] == $_POST['newPassword2']){
+
+                ChangeData::editPassword($_POST['newPassword1']);
+
+                Flash::addMessage('Password has been changed.');
+
+                $this->before();
+
+                View::renderTemplate('Settings/index.html', [
+                    'revenueCategories' => $this->revenueCategories,
+                    'expenseCategories' => $this->expenseCategories,
+                    'payments' => $this->payments
+                ]);
+            } else {
+
+                Flash::addMessage('Passwords are different.', Flash::WARNING);
+
+                $this->before();
+
+                View::renderTemplate('Settings/index.html', [
+                    'revenueCategories' => $this->revenueCategories,
+                    'expenseCategories' => $this->expenseCategories,
+                    'payments' => $this->payments
+                ]);
+            }
+        } else {
+
+                Flash::addMessage('Old password is invalid.', Flash::WARNING);
+
+                $this->before();
+
+                View::renderTemplate('Settings/index.html', [
+                    'revenueCategories' => $this->revenueCategories,
+                    'expenseCategories' => $this->expenseCategories,
+                    'payments' => $this->payments
+                ]);
 
         }
     }

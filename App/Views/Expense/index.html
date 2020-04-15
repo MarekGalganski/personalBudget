@@ -42,7 +42,10 @@
         </section>
         <section class="row justify-content-center">
             <section class="col-12 col-sm-8 col-md-6 col-lg-4">
-                <form class="form-container" action="/expense/add" method="post"> 
+                <div id="balance" >
+                    Balance
+                </div>
+                <form class="form-container" action="/expense/add" method="post" id="expenseForm"> 
                   <div class="formTitle">
                     <h3>EXPENSE</h3>
                   </div>
@@ -72,13 +75,16 @@
                         <small id="amountHelp" class="form-text text-muted">{{expense.errors.emptyPayment}}</small>
                     </div>
                     <div class="form-group">
-                        <label for="expenseCategory">Category</label>
-                        <select class="form-control" id="expenseCategory" name="category" required>
-                            <option value="" selected disabled hidden >Choose</option>
+                        <label for="expenseCategory">Category</label></br>
+                        
+                            
                             {% for categorie in categories %}
-                            <option value='{{categorie.name}}'>{{categorie.name}}</option>
+                            <div class="input-group">
+                            <label><input type="radio" name="category" onclick="change()" id="category" value="{{categorie.name}}">{{categorie.name}}</br>
+                                  {{categorie.category_limit}}</label></br>
+                            </div>
 							{% endfor%}
-                        </select>
+                        
                         <small id="amountHelp" class="form-text text-muted">{{expense.errors.emptyCategory}}</small>
                     </div>
                     <div class="form-group">
@@ -98,6 +104,34 @@
       $( function() {
 		$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
 	    } );
+      </script>
+      <script>
+        $(document).ready(function() {
+
+            $('#expenseForm').validate({
+                rules: {
+                    amount: {
+                        required: true,
+                        number: true
+                    }  
+                }
+               
+            });
+        });
+      </script>
+      <script>
+        function change(){
+        $('#category').change(function(){
+            var form = $("#expenseForm");
+
+            var checkedValue = form.find("input[name=category]:checked").val();
+            $(document).ready(
+                function() {
+                    $('#balance').text(checkedValue);
+                }
+            );  
+        });  
+    }
       </script>
   {% endblock %}
 {% endblock %}
