@@ -146,4 +146,32 @@ class Expenses extends \Core\Model
 
         return $stmt->fetchColumn();
     }
+
+    public static function selectLimit($categoryName){
+        $sql = 'SELECT category_limit FROM expenses_category_assigned_to_users WHERE name = :name AND user_id = :user_id';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':name', $categoryName, PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        return $stmt->fetch();
+
+    }
+
+    public static function getSumExpensesFromOneCategory($categoryName){
+        $sql = 'SELECT SUM(amount) FROM expenses WHERE expense_category_assigned_to_user_id = :name AND user_id = :user_id';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':name', $categoryName, PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+
+    }
 }

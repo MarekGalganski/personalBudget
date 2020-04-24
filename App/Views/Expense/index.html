@@ -42,8 +42,19 @@
         </section>
         <section class="row justify-content-center">
             <section class="col-12 col-sm-8 col-md-6 col-lg-4">
-                <div id="balance" >
-                    Balance
+                <div id="ok" style="display: none;">
+                    <div class="four">
+                        <p><b>Limit: </b><span id="txt1"></span></p>
+                    </div>
+                    <div class="four">
+                        <p><b>Has already been issued: </b><span id="txt2"></span></p>
+                    </div>
+                    <div class="four">
+                        <p><b>Difference: </b><span id="txt3"></span></p>
+                    </div>
+                    <div class="four">
+                        <p><b>Expenses+Amount entered: </b><span id="txt4"></span></p>
+                    </div>
                 </div>
                 <form class="form-container" action="/expense/add" method="post" id="expenseForm"> 
                   <div class="formTitle">
@@ -52,7 +63,7 @@
                     <div class="form-group">
                       <label for="inputAmount">Amount</label>
                       <input id="inputAmount" name="amount" placeholder="Amount" type="text" autofocus
-                      class="form-control" aria-describedby="amountHelp" required />
+                      class="form-control" aria-describedby="amountHelp" onkeyup="showHint()" required />
                       <small id="amountHelp" class="form-text text-muted">{{expense.errors.notDigit}}</small>
                       <small id="amountHelp" class="form-text text-muted">{{expense.errors.emptyDigit}}</small>
                     </div>
@@ -80,7 +91,7 @@
                             
                             {% for categorie in categories %}
                             <div class="input-group">
-                            <label><input type="radio" name="category" onclick="change()" id="category" value="{{categorie.name}}">{{categorie.name}}</br>
+                            <label><input type="radio" name="category" onclick="showHint()"  class="category" value="{{categorie.name}}">{{categorie.name}}</br>
                                   {{categorie.category_limit}}</label></br>
                             </div>
 							{% endfor%}
@@ -100,6 +111,7 @@
             </section>
       </section>
       {% block footer %}
+ 
       <script>
       $( function() {
 		$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
@@ -120,18 +132,42 @@
         });
       </script>
       <script>
-        function change(){
-        $('#category').change(function(){
-            var form = $("#expenseForm");
-
-            var checkedValue = form.find("input[name=category]:checked").val();
-            $(document).ready(
-                function() {
-                    $('#balance').text(checkedValue);
+      function showHint() {
+       
+            var category = $('input[name="category"]:checked').val();
+            var amount = document.getElementById('inputAmount').value;
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    if(this.responseText === ""){
+                    console.log('Nie pokaze nic');
+                    document.getElementById("ok").style.display = "none";
+                    }else{
+                        var array = this.response.split("|");
+                        
+                        if(array[2] >= 0){
+                            document.getElementById("ok").style.display = "block";
+                            document.getElementById("ok").style.backgroundColor = "green";
+                            document.getElementById("txt1").innerHTML = array[0];
+                            document.getElementById("txt2").innerHTML = array[1];
+                            document.getElementById("txt3").innerHTML = array[2];
+                            document.getElementById("txt4").innerHTML = array[3];
+                        }else{
+                            document.getElementById("ok").style.display = "block";
+                            document.getElementById("ok").style.backgroundColor = "red";
+                            document.getElementById("txt1").innerHTML = array[0];
+                            document.getElementById("txt2").innerHTML = array[1];
+                            document.getElementById("txt3").innerHTML = array[2];
+                            document.getElementById("txt4").innerHTML = array[3];
+                        }
+                    }
                 }
-            );  
-        });  
+            };
+            xmlhttp.open("GET", "/expense/get-sum?amount=" + amount + "&category=" + category, true);
+            xmlhttp.send();
+        
     }
+    
       </script>
   {% endblock %}
 {% endblock %}

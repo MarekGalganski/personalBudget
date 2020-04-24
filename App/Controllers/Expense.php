@@ -61,5 +61,34 @@ class Expense extends Authenticated
         }
     }
 
+    public function getSumAction()
+    {
+      $amount = $_REQUEST['amount'];
+      $category = $_REQUEST['category'];
+      if(empty($amount) || !is_numeric($amount) || $category == "undefined"){
+        exit();
+      }
+      $limit = Expenses::selectLimit($category);
+      if(empty($limit['category_limit'])){
+        exit();
+      }
+      $sumExpenses = Expenses::getSumExpensesFromOneCategory($category);
+      if(empty($sumExpenses)){
+        $sumExpenses = 0;
+      }else{
+        $sumExpenses = intval($sumExpenses);
+      } 
+      $limit = intval($limit['category_limit']);
+      $amount = intval($amount);
+
+      $expensesWithAmount = $amount + $sumExpenses;
+      $expenseDifferential = $limit - $expensesWithAmount;
+
+      echo $limit."|".$sumExpenses."|".$expenseDifferential."|".$expensesWithAmount;
+      
+      
+  
+    }
+
     
 }
