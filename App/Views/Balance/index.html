@@ -1,104 +1,388 @@
-{% extends "baseAfterLogin.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-{% block body %}
+    <title>Personal Budget</title>
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+  
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">My Finances</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+    {% for message in flash_messages %}
+        <div class="alert alert-{{ message.type }} alert-dismissible" id="role" role="alert" >
+            {{ message.body }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
             </button>
-      
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                <a class="nav-link" href="/start">Home</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" href="/revenue">Add Revenue</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/expense">Add Expense</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/balance">Balance Sheet</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/settings">Settings</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Log Out</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Period
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="/balance">Current Month</a>
-                      <a class="dropdown-item" href="/Balance/balancePreviousMonth">Previous Month</a>
-                      <a class="dropdown-item" href="/Balance/balanceCurrentYear">Current Year</a>
-                      <a class="dropdown-item" href="/Balance/balanceNonStandard">Non-standard</a>
-                    </div>
-                  </li>
-            </ul>
-            </div>
-        </div>     
-    </nav>
+        </div>
+    {% endfor %}
+    
     <section class="container-fluid">
-        <section class="row justify-content-center">
-          <section class="col-12 col-sm-6 col-md-6 col-lg-3 title">
-           <h1>Current Month</h1>
+        <section class="row ">
+          <section class="col-12 col-sm-2">
+              <div class="logo">
+                  <a href="/start"><h2>My Budget</h2></a>
+              </div>
           </section>      
         </section>
-        <section class="row justify-content-center">
-            <section class="col-12 col-sm-6 col-md-6 col-lg-3">
-                <div class="card text-white bg-primary" >
-                    <div class="card-header">Revenues</div>
-                    <div class="card-body">
-                        <h2>{{ sumRevenues }}</h2>
-                        {% for revenue in revenues %}
-                            <li><h5>{{ revenue.amount }} - {{ revenue.income_category_assigned_to_user_id }}
-                                -{{ revenue.date_of_income }}</h5></li>
-                        {% endfor%}
-                    </div>
+        <section class="row">
+            <section class="col-12 col-sm-2">
+                <div class="nav flex-column nav-pills navigation"  role="tablist" aria-orientation="vertical">
+                    <a class="nav-link "  href="/revenue" role="tab" aria-controls="v-pills-home" aria-selected="true">Add Revenue</a>
+                    <a class="nav-link"  href="/expense" role="tab" aria-controls="v-pills-profile" aria-selected="false">Add Expense</a>
+                    <a class="nav-link active"  href="/balance" role="tab" aria-controls="v-pills-messages" aria-selected="false">Balance</a>
+                    <a class="nav-link"  href="/settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
+                    <a class="nav-link" href="/logout" role="tab" aria-controls="v-pills-settings" aria-selected="false">Log Out</a>
+                  </div>
             </section>
-            <section class="col-12 col-sm-6 col-md-6 col-lg-3">
-                <div class="card text-white bg-primary" >
-                    <div class="card-header">Expenses</div>
-                    <div class="card-body">
-                        <h2>{{ sumExpenses }}</h2>
-                        {% for expense in expenses %}
-                            <li><h5>{{ expense.amount }} - {{ expense.expense_category_assigned_to_user_id }}
-                                - {{ expense.date_of_expense }}
-                            </h5></li>
-                        {% endfor%}
+            <section class="col-12 col-sm-10">
+                <section class="row justify-content-between">
+                    <section class="col-12 col-sm-8 col-md-5 col-lg-4">
+                        <div id="chartContainer1" style="height: 200px; width: 100%; margin-top: 50px;"></div>
+                    </section>
+                    <section class="col-12 col-sm-8 col-md-5 col-lg-4" style="margin-right: 0;">
+                        <form>
+                            <div class="form-row align-items-center">
+                              <div class="col-auto my-1">
+                                <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
+                                <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                  <option selected>Choose range</option>
+                                  <option value="1">Current Month</option>
+                                  <option value="2">Previous Mont</option>
+                                  <option value="3">Current Year</option>
+                                  <option value="3">Set range</option>
+                                </select>
+                              </div>
+                              <div class="col-auto my-1">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                              </div>
+                            </div>
+                          </form>
+                    </section>
+                </section>
+                <section class="row">
+                <section class="col-12 col-sm-8">
+                <div class="revenue">
+                    <h3>Reveneues</h3>
+                    <label>Revenue table</label>
+                    <table class="table">
+                        <thead class="thead-dark">
+                          <tr style="text-align: center;">
+                            <th scope="col">No</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Value</th>
+                            <th scope="col">Show Details</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for groupedRevenue in groupedRevenues %} 
+                        {% set counter = ( counter | default(0) ) + 1 %}
+                          <tr style="text-align: center;">
+                            <th scope="row">{{ counter }}</th>
+                            <td>{{ groupedRevenue.income_category_assigned_to_user_id }}</td>
+                            <td>{{ groupedRevenue.1 }}</td>
+                            <td><button type="button" class="btn btn-primary showRevenues">Show</button></td>
+                          </tr>
+                          {% endfor%}
+                          {% if groupedRevenues is empty %}
+                          <tr style="text-align: center; ">
+                            <td style="text-align: center;" colspan="4">No revenue</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" colspan="4"></th>
+                              </tr>
+                          {% else %}
+                           <tr style="text-align: center; ">
+                            <th scope="row"></th>
+                            <td>Sum:</td>
+                              <td>{{ sumRevenues }}</td>
+                              <td></td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" colspan="4"></th>
+                              </tr>
+                           {% endif %} 
+                        </tbody>
+                      </table>
                     </div>
+                </section>
+                <section class="col-12 col-sm-8 col-md-5 col-lg-4">
+                    <div id="chartContainer2" style="height: 200px; width: 100%; margin-top: 50px;"></div>
+                </section>
+                </section>
+                <section class="row">
+                    <section class="col-12 col-sm-8">
+                    <div class="revenue">
+                        <h3>Expenses</h3>
+                        <label>Expense table</label>
+                        <table class="table">
+                            <thead class="thead-dark">
+                              <tr style="text-align: center;">
+                                <th scope="col">No</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Value</th>
+                                <th scope="col">Show Details</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            {% for groupedExpense in groupedExpenses %} 
+                            {% set counter = ( counter | default(0) ) + 1 %}
+                              <tr style="text-align: center;">
+                                <th scope="row">{{ counter }}</th>
+                                <td>{{ groupedExpense.expense_category_assigned_to_user_id }}</td>
+                                <td>{{ groupedExpense.1 }}</td>
+                                <td><button type="button" class="btn btn-primary showExpenses">Show</button></td>
+                              </tr>
+                              {% endfor%}
+                              {% if groupedExpenses is empty %}
+                                <tr style="text-align: center; ">
+                                    <td style="text-align: center;" colspan="4">No expense</td>
+                                    </tr>
+                                <tr>
+                                    <th scope="row" colspan="4"></th>
+                                </tr>
+                          {% else %}
+                              <tr style="text-align: center;">
+                              <th scope="row"></th>
+                              <td>Sum:</td>
+                                <td>{{ sumExpenses }}</td>
+                                <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" colspan="4"></th>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                          </table>
+                        </div>
+                    </section>
+                    <section class="col-12 col-sm-8 col-md-5 col-lg-4">
+                        <div id="chartContainer3" style="height: 200px; width: 100%; margin-top: 50px;"></div>
+                    </section>
+                    </section>
             </section>
         </section>
-            <section class="row justify-content-center">
-                <section class="col-12 col-sm-6 col-md-6 col-lg-3">
-                    <div class="card text-white bg-primary" >
-                        <div class="card-header">Balance</div>
-                        <div class="card-body">
-                            <h2>{{ balance }}</h2>
-                            {% if balance > 0 %}
-                                <h2>Your balance is positive!</h2>
-                            {% elseif balance == 0 %}
-                                <h2>Your balance is equal!</h2>
-                            {% elseif balance < 0 %}   
-                                <h2>Your balance is negative!</h2>
-                            {% endif %}
-                        </div>
-                </section>
-      </section>
-      {% block footer %}
-      <script>
-      $( function() {
-		$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
-	    } );
-      </script>
-  {% endblock %}
-{% endblock %}
+        <div class="modal fade" id="revenuesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Revenues</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead class="thead-dark">
+                          <tr style="text-align: center;">
+                            <th scope="col">Date</th>
+                            <th scope="col">Value</th>
+                            <th scope="col">Comment</th>
+                            <th scope="col">Delete</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for revenue in revenues %} 
+                          <tr style="text-align: center;">
+                            <th scope="row">{{ revenue.date_of_income }}</th>
+                            <td>{{ revenue.amount }}</td>
+                            <td>{{ revenue.income_comment }}</td>
+                            <td>
+                                <form action="/Balance/deleteSingleRevenueCurrentMonth" method="post">
+                                    <input type="hidden" value="{{ revenue.id }}" name="id">
+                                    <button type="submit"name="delete" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                          </tr>
+                          {% endfor%}
+                        </tbody>
+                      </table>  
+                </div>
+              </div>
+            </div>
+          </div> 
+          
+          <div class="modal fade" id="expensesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Expenses</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead class="thead-dark">
+                          <tr style="text-align: center;">
+                            <th scope="col">Date</th>
+                            <th scope="col">Value</th>
+                            <th scope="col">Method Payment</th>
+                            <th scope="col">Comment</th>
+                            <th scope="col">Delete</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for expense in expenses %} 
+                          <tr style="text-align: center;">
+                            <th scope="row">{{ expense.date_of_expense }}</th>
+                            <td>{{ expense.amount }}</td>
+                            <td>{{ expense.3 }}</td>
+                            <td>{{ expense.expense_comment }}</td>
+                            <td>
+                                <form action="/Balance/deleteSingleExpenseCurrentMonth" method="post">
+                                    <input type="hidden" value="{{ expense.id }}" name="id">
+                                    <button type="submit"name="delete" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                          </tr>
+                          {% endfor%}
+                        </tbody>
+                      </table>  
+                </div>
+              </div>
+            </div>
+          </div>
+                        
+
+          <script src="https://code.jquery.com/jquery-3.4.1.min.js" 
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+          <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+          <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+          integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+          <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+          integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+          <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+      
+<script>
+
+    $(document).ready(function(){
+
+        const example = document.getElementById('role')
+          const time = 2500
+          
+        setTimeout(() => {
+            example.style.display = 'none'
+        }, time)
+
+        $('.showRevenues').on('click', function() {
+
+            $('#revenuesModal').modal('show');
 
 
+        });
+
+        $('.showExpenses').on('click', function() {
+
+            $('#expensesModal').modal('show');
+
+
+        });
+    });
+</script>
+<script>
+                    
+window.onload = function () {
+    var dataPoints1 = [];
+    var dataPoints2 = [];
+    var dataPoints3 = [];
+                
+    var chart1 = new CanvasJS.Chart("chartContainer1", {
+        animationEnabled: true,
+        theme: "light2", // "light1", "light2", "dark1", "dark2"
+        title:{
+            text: "Current Month"
+        },
+        data: [{        
+            type: "column",  
+            showInLegend: true, 
+            legendMarkerColor: "grey",
+            dataPoints: dataPoints1
+        }]
+    });
+            
+    function addData1(data) {
+        var dps = data;
+
+        for( var i = 0; i < dps.length; i++){
+            
+            dataPoints1.push(dps[i]);
+
+        }
+              
+        chart1.render();
+    }
+            
+    $.getJSON("/balance/get-balance-to-char-curret-month", addData1);
+
+    var chart2 = new CanvasJS.Chart("chartContainer2", {
+        animationEnabled: true,
+        title: {
+            text: "Revenues"
+        },
+        data: [{
+            type: "pie",
+            startAngle: 240,
+            yValueFormatString: "##0.00\"pln\"",
+            indexLabel: "{label} {y}",
+            dataPoints: dataPoints2
+        }]
+    });
+
+    function addData2(data) {
+        var dps = data;
+
+        for( var i = 0; i < dps.length; i++){
+            
+            dataPoints2.push(dps[i]);
+
+        }
+        if(dps.length > 0){       
+        chart2.render();
+        };
+    }
+
+    $.getJSON("/balance/get-reveues-to-char-current-month-action", addData2);
+
+    var chart3 = new CanvasJS.Chart("chartContainer3", {
+        animationEnabled: true,
+        title: {
+            text: "Expenses"
+        },
+        data: [{
+            type: "pie",
+            startAngle: 240,
+            yValueFormatString: "##0.00\"pln\"",
+            indexLabel: "{label} {y}",
+            dataPoints: dataPoints3
+        }]
+    });
+
+    function addData3(data) {
+        var dps = data;
+
+        for( var i = 0; i < dps.length; i++){
+            
+            dataPoints3.push(dps[i]);
+
+        }
+        if(dps.length > 0){        
+        chart3.render();
+        };
+    }
+
+    $.getJSON("/balance/get-expenses-to-char-current-month-action", addData3);
+
+    }
+
+</script>
+
+</body>
+</html>

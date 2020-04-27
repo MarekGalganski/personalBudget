@@ -6,6 +6,7 @@ use \Core\View;
 use \App\Auth;
 use \App\Models\Revenues;
 use \App\Models\Expenses;
+use \App\Models\Delete;
 use \App\Flash;
 
 /**
@@ -36,14 +37,21 @@ class Balance extends Authenticated
         $sumRevenues = Revenues::getSumRevenues($_SESSION['user_id'], $first_day_this_month, $last_day_this_month);
         $sumExpenses = Expenses::getSumExpenses($_SESSION['user_id'], $first_day_this_month, $last_day_this_month);
 
+        $groupedRevenues = Revenues::getGroupedRevenues($first_day_this_month, $last_day_this_month);
+        $groupedExpenses = Expenses::getGroupedExpenses($first_day_this_month, $last_day_this_month);
+
         $balance = $sumRevenues-$sumExpenses;
+
+        
         
         View::renderTemplate('Balance/index.html', [
             'revenues' => $revenues,
             'expenses' => $expenses,
             'sumRevenues' => $sumRevenues,
             'sumExpenses' => $sumExpenses,
-            'balance' => $balance
+            'balance' => $balance,
+            'groupedRevenues' => $groupedRevenues,
+            'groupedExpenses' => $groupedExpenses
             ]);
     }
 
@@ -133,7 +141,75 @@ class Balance extends Authenticated
 
     }
 
+    public function getBalanceToCharCurretMonthAction(){
+        $first_day_this_month  = date('Y-m-d', strtotime('first day of this month'));
+        $last_day_this_month = date('Y-m-d', strtotime('last day of this month'));
+        
+        
+        $sumRevenues = Revenues::getSumRevenues($_SESSION['user_id'], $first_day_this_month, $last_day_this_month);
+        $sumExpenses = Expenses::getSumExpenses($_SESSION['user_id'], $first_day_this_month, $last_day_this_month);
+        
+        $dataPoints = array(
+            array("y"=> $sumRevenues, "label"=> "Revenues"),
+            array("y"=> $sumExpenses, "label"=> "Expenses")
+        );
 
+        header('Content-Type: application/json');
+        echo json_encode($dataPoints, JSON_NUMERIC_CHECK);
+    }
+
+    public function getReveuesToCharCurrentMonthAction(){
+        $first_day_this_month  = date('Y-m-d', strtotime('first day of this month'));
+        $last_day_this_month = date('Y-m-d', strtotime('last day of this month'));
+        
+        $revenues = Revenues::getGroupedRevenues($first_day_this_month, $last_day_this_month);;
+        
+        $dataPoints = [];
+        for($i = 0;$i < sizeof($revenues);$i++){
+            array_push($dataPoints,array("y"=> $revenues[$i]['SUM(amount)'], "label"=> $revenues[$i]['income_category_assigned_to_user_id']));
+        }
+        header('Content-Type: application/json');
+        echo json_encode($dataPoints, JSON_NUMERIC_CHECK);
+    }
+
+    public function getExpensesToCharCurrentMonthAction(){
+        $first_day_this_month  = date('Y-m-d', strtotime('first day of this month'));
+        $last_day_this_month = date('Y-m-d', strtotime('last day of this month'));
+        
+        $expenses = Expenses::getGroupedExpenses($first_day_this_month, $last_day_this_month);
+        
+        $dataPoints = [];
+        for($i = 0;$i < sizeof($expenses);$i++){
+            array_push($dataPoints,array("y"=> $expenses[$i]['SUM(amount)'], "label"=> $expenses[$i]['expense_category_assigned_to_user_id']));
+        }
+        header('Content-Type: application/json');
+        echo json_encode($dataPoints, JSON_NUMERIC_CHECK);
+    }
+
+    public function getAction(){
+        $first_day_this_month  = date('Y-m-d', strtotime('first day of this month'));
+        $last_day_this_month = date('Y-m-d', strtotime('last day of this month'));
+        $arr = Revenues::getGroupedRevenues($first_day_this_month, $last_day_this_month);
+        
+        var_dump($arr);
+    }
     
+    public function deleteSingleRevenueCurrentMonthAction(){
+        
+        Delete::deleteSingleRevenue($_POST['id']);
+        Flash::addMessage('Revenue has been deleted.');
+
+        $this->indexAction();
+
+    }
+
+    public function deleteSingleExpenseCurrentMonthAction(){
+        
+        Delete::deleteSingleExpense($_POST['id']);
+        Flash::addMessage('Expense has been deleted.');
+
+        $this->indexAction();
+
+    }
 
 }

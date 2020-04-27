@@ -76,19 +76,19 @@ class Expense extends Authenticated
       if(empty($sumExpenses)){
         $sumExpenses = 0;
       }else{
-        $sumExpenses = intval($sumExpenses);
+        $sumExpenses = floatval($sumExpenses);
       } 
-      $limit = intval($limit['category_limit']);
-      $amount = intval($amount);
-
+      $limit = floatval($limit['category_limit']);
+      $amount = floatval($amount);
+      
       $expensesWithAmount = $amount + $sumExpenses;
       $expenseDifferential = $limit - $expensesWithAmount;
 
       echo $limit."|".$sumExpenses."|".$expenseDifferential."|".$expensesWithAmount;
       
-      
-  
     }
+    
+    
 
     
 }

@@ -98,7 +98,7 @@ class Revenues extends \Core\Model
 
     public static function getRevenues($id_user, $first_day, $last_day)
     {
-        $sql = 'SELECT * FROM incomes WHERE date_of_income>=:first_day AND date_of_income<=:last_day AND user_id=:id_user';
+        $sql = 'SELECT * FROM incomes WHERE date_of_income>=:first_day AND date_of_income<=:last_day AND user_id=:id_user ORDER BY date_of_income ASC';
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
@@ -126,5 +126,23 @@ class Revenues extends \Core\Model
         $stmt->execute();
 
         return $stmt->fetchColumn();
+    }
+
+    public static function getGroupedRevenues($first_day, $last_day)
+    {
+        $sql = 'SELECT income_category_assigned_to_user_id, SUM(amount) FROM `incomes`
+        WHERE user_id = :id_user AND date_of_income>=:first_day AND date_of_income<= :last_day
+        GROUP BY income_category_assigned_to_user_id';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':id_user', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':first_day', $first_day);
+        $stmt->bindValue(':last_day', $last_day);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 }

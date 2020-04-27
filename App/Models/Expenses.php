@@ -117,7 +117,7 @@ class Expenses extends \Core\Model
 
     public static function getExpenses($id_user, $first_day, $last_day)
     {
-        $sql = 'SELECT * FROM expenses WHERE date_of_expense>=:first_day AND date_of_expense<=:last_day AND user_id=:id_user';
+        $sql = 'SELECT * FROM expenses WHERE date_of_expense>=:first_day AND date_of_expense<=:last_day AND user_id=:id_user ORDER BY date_of_expense ASC';
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
@@ -173,5 +173,23 @@ class Expenses extends \Core\Model
 
         return $stmt->fetchColumn();
 
+    }
+
+    public static function getGroupedExpenses($first_day, $last_day)
+    {
+        $sql = 'SELECT expense_category_assigned_to_user_id, SUM(amount) FROM `expenses`
+        WHERE user_id = :id_user AND date_of_expense>=:first_day AND date_of_expense<= :last_day
+        GROUP BY expense_category_assigned_to_user_id';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':id_user', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':first_day', $first_day);
+        $stmt->bindValue(':last_day', $last_day);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 }

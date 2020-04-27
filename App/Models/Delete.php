@@ -59,4 +59,34 @@ class Delete extends \Core\Model
         return $stmt->execute();
     }
 
+    public static function deleteSingleRevenue($id)
+    {
+        $sql = 'DELETE FROM incomes WHERE id=:id';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->execute();
+
+    }
+
+    public static function deleteSingleExpense($id)
+    {
+        $sql = 'DELETE FROM expenses WHERE id=:id';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->execute();
+
+    }
+
 }
