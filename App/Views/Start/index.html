@@ -1,9 +1,9 @@
 {% extends "baseAfterLogin.html" %}
 
 {% block body %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light navbarNew">
         <div class="container">
-            <a class="navbar-brand" href="#">My Finances</a>
+            <a class="navbar-brand navbar-fixed-top" href="/start"><img src="/images/MyBudgetSmall.png"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -11,9 +11,6 @@
       
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                <a class="nav-link" href="/start">Home</a>
-                </li>
                 <li class="nav-item">
                 <a class="nav-link" href="/revenue">Add Revenue</a>
                 </li>
@@ -35,11 +32,35 @@
     </nav>
     <section class="container-fluid">
         <section class="row justify-content-center">
-          <section class="col-12 col-sm-6 col-md-3 title">
-           <h1>Personal Budget</h1>
+          <section class="col-12 col-sm-6 col-md-4">
+              <h1 style="margin-top: 5%;">Hello &nbsp; {{ name }}!</h1>
+            <div class="card mx-auto boxDescription" style="margin-top: 5%;">
+                <div class="card-body mx-auto" style="padding: 40px;">
+                 <p style="text-align: justify; font-size: 16.5px;">
+                    <b>Add revenue</b></br>
+                    -You can add revenue from any date and category.</br>
+                    <b>Add expense</b></br>
+                    -You can add expense from any date and category.</br>
+                    -For categories with an added limit,  you can keep an eye on the limit.</br>
+                    <b>Balance Sheet</b></br>
+                    -You can see your expenses and revenues on the statement.</br>
+                    -You can check the balance sheet at any time.</br>
+                    <b>Settings</b></br>
+                    -You can change your all data.</br>
+                    -You can add limit to expense category.
+                    <p>
+                <p></p>
+                     
+                </div>
+              </div>
           </section>      
         </section>
       </section>
+      <footer class="footer2" style="margin-top: 10%;">
+        <div>© 2020 Copyright:
+          <a href="/">mybudget.marek-galganski.pl</a>
+        </div>
+      </footer>
       
 {% endblock %}
 

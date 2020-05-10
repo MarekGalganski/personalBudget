@@ -1,10 +1,34 @@
-{% extends "baseAfterLogin.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-{% block body %}
+    <title>My Budget</title>
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="icon" href="/images/MB.png">
+</head>
+<body>
+  
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    {% for message in flash_messages %}
+        <div class="alert alert-{{ message.type }} alert-dismissible" id="role" role="alert" >
+            {{ message.body }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+    
+    
+      <nav class="navbar navbar-expand-lg navbar-light navbarNew" style="margin-bottom: 3%;">
         <div class="container">
-            <a class="navbar-brand" href="#">My Finances</a>
+            <a class="navbar-brand" href="/start"><img src="/images/MyBudgetSmall.png"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -13,16 +37,13 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                <a class="nav-link" href="/start">Home</a>
-                </li>
-                <li class="nav-item">
                 <a class="nav-link" href="/revenue">Add Revenue</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/expense">Add Expense</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/balance">Balance Sheet</a>
+                    <a class="nav-link activeItem" href="/balance">Balance Sheet</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/settings">Settings</a>
@@ -31,100 +52,484 @@
                     <a class="nav-link" href="/logout">Log Out</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Period
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="/balance">Current Month</a>
-                      <a class="dropdown-item" href="/Balance/balancePreviousMonth">Previous Month</a>
-                      <a class="dropdown-item" href="/Balance/balanceCurrentYear">Current Year</a>
-                      <a class="dropdown-item" href="/Balance/balanceNonStandard">Non-standard</a>
-                    </div>
-                  </li>
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Date Period
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/balance">Current Month</a>
+                    <a class="dropdown-item" href="/balance/previousMonth">Previous Month</a>
+                    <a class="dropdown-item" href="/balance/currentYear">Current Year</a>
+                    <a class="dropdown-item cursor" onclick="showDate()">Set Range</a>
+                  </div>
+                </li>
             </ul>
             </div>
         </div>     
     </nav>
     <section class="container-fluid">
-        <section class="row justify-content-center">
-          <section class="col-12 col-sm-6 col-md-6 col-lg-3 title">
-           <h1>Personal Budget</h1>
-          </section>      
-        </section>
-        <section class="row justify-content-center">
-            <section class="col-12 col-sm-8 col-md-6 col-lg-4">
-                <form action="/balance/addDate" method="post">
-                    <div class="form-row align-items-center">
-                      <div class="col-auto">
-                        <input type="text" class="form-control mb-2 datepicker" name="date1" placeholder="From">
-                        <small class="form-text text-muted">{{error}}</small>
-                      </div>
-                      <div class="col-auto">
-                        <input type="text" class="form-control mb-2 datepicker" name="date2" placeholder="To">
-                        <small class="form-text text-muted">{{error}}</small>
-                      </div>
-                      <div class="col-auto">
-                        <button type="submit" class="btn btn-primary mb-2">Submit</button>
-                      </div>
+
+              <section class="row justify-content-md-center">
+                <section class="col-12 col-sm-8 col-md-5">
+                  <h1>{{firstDate}} -&nbsp;{{secondDate}}</h1>
+                </section>  
+              </section>
+
+                <section class="row justify-content-md-center">
+                  <section class="col-12 col-sm-8 col-md-5 col-lg-4">
+                    <div id="chartContainer1" style="height: 200px; width: 100%; margin-top: 50px; margin-bottom: 20px;"></div>
+                  </section>  
+                </section>
+
+                
+                <h2>Reveneues</h2>
+                <section class="row justify-content-md-center">
+                <section class="col-12 col-sm-8 col-xl-7">
+                <div class="revenue">
+                    <table class="table table-dark table-hover">
+                        <thead class="thead-dark">
+                          <tr style="text-align: center;">
+                            <th scope="col">No</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Value</th>
+                            <th scope="col">Show Details</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for groupedRevenue in groupedRevenues %} 
+                        {% set counter = ( counter | default(0) ) + 1 %}
+                          <tr style="text-align: center;">
+                            <th scope="row">{{ counter }}</th>
+                            <td>{{ groupedRevenue.income_category_assigned_to_user_id }}</td>
+                            <td>{{ groupedRevenue.1 }}</td>
+                            <td>
+                              <input type="hidden" value="{{ groupedRevenue.income_category_assigned_to_user_id }}" name="revenueCategory"/>
+                              <button type="button" class="btn btn-primary showRevenues">Show</button>
+                            </td>
+                          </tr>
+                          {% endfor%}
+                          {% if groupedRevenues is empty %}
+                          <tr style="text-align: center; ">
+                            <td style="text-align: center;" colspan="4">No revenue</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" colspan="4"></th>
+                              </tr>
+                          {% else %}
+                           <tr style="text-align: center; ">
+                            <th scope="row"></th>
+                            <td>Sum:</td>
+                              <td>{{ sumRevenues }}</td>
+                              <td></td>
+                              </tr>
+                           {% endif %} 
+                        </tbody>
+                      </table>
                     </div>
-                  </form>   
-            </section>
-      </section>
-      <section class="row justify-content-center">
-            {% if first_day is defined %}
-            <section class="col-12 col-sm-6 col-md-6 col-lg-4 title">
-                <h1>{{first_day}} -&nbsp;{{ last_day}}</h1>
-            </section>  
-            {% endif %}    
-      </section>
-      <section class="row justify-content-center">
-        <section class="col-12 col-sm-6 col-md-6 col-lg-3">
-            <div class="card text-white bg-primary" >
-                <div class="card-header">Revenues</div>
-                <div class="card-body">
-                    <h2>{{ sumRevenues }}</h2>
-                    {% for revenue in revenues %}
-                        <li><h5>{{ revenue.amount }} - {{ revenue.income_category_assigned_to_user_id }}
-                            -{{ revenue.date_of_income }}</h5></li>
-                    {% endfor%}
-                </div>
+                </section>
+                <section class="col-12 col-sm-4 col-xl-3">
+                    <div id="chartContainer2" style="height: 200px; width: 100%;"></div>
+                </section>
+                </section>
+                <h2>Expenses</h2>
+                <section class="row justify-content-md-center">
+                    <section class="col-12 col-sm-8 col-xl-7">
+                    <div class="revenue">
+                        <table class="table table-dark table-hover">
+                            <thead class="thead-dark">
+                              <tr style="text-align: center;">
+                                <th scope="col">No</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Value</th>
+                                <th scope="col">Show Details</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            {% for groupedExpense in groupedExpenses %} 
+                            {% set counter = ( counter | default(0) ) + 1 %}
+                              <tr style="text-align: center;">
+                                <th scope="row">{{ counter }}</th>
+                                <td>{{ groupedExpense.expense_category_assigned_to_user_id }}</td>
+                                <td>{{ groupedExpense.1 }}</td>
+                                <td>
+                                  <input type="hidden" value="{{ groupedExpense.expense_category_assigned_to_user_id }}" name="expenseCategory"/>
+                                  <button type="button" class="btn btn-primary showExpenses">Show</button>
+                                </td>
+                              </tr>
+                              {% endfor%}
+                              {% if groupedExpenses is empty %}
+                                <tr style="text-align: center; ">
+                                    <td style="text-align: center;" colspan="4">No expense</td>
+                                    </tr>
+                                <tr>
+                                    <th scope="row" colspan="4"></th>
+                                </tr>
+                          {% else %}
+                              <tr style="text-align: center;">
+                              <th scope="row"></th>
+                              <td>Sum:</td>
+                                <td>{{ sumExpenses }}</td>
+                                <td></td>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                          </table>
+                        </div>
+                    </section>
+                    <section class="col-12 col-sm-4 col-xl-3">
+                        <div id="chartContainer3" style="height: 200px; width: 100%;"></div>
+                    </section>
+                    </section>
         </section>
-        <section class="col-12 col-sm-6 col-md-6 col-lg-3">
-            <div class="card text-white bg-primary" >
-                <div class="card-header">Expenses</div>
-                <div class="card-body">
-                    <h2>{{ sumExpenses }}</h2>
-                    {% for expense in expenses %}
-                        <li><h5>{{ expense.amount }} - {{ expense.expense_category_assigned_to_user_id }}
-                            - {{ expense.date_of_expense }}
-                        </h5></li>
-                    {% endfor%}
-                </div>
-        </section>
-    </section>
-        <section class="row justify-content-center">
-            <section class="col-12 col-sm-6 col-md-6 col-lg-3">
-                <div class="card text-white bg-primary" >
-                    <div class="card-header">Balance</div>
-                    <div class="card-body">
-                        <h2>{{ balance }}</h2>
-                        {% if balance > 0 %}
-                            <h2>Your balance is positive!</h2>
-                        {% elseif balance == 0 %}
-                            <h2>Your balance is equal!</h2>
-                        {% elseif balance < 0 %}   
-                            <h2>Your balance is negative!</h2>
-                        {% endif %}
-                    </div>
-            </section>
-  </section>
-      {% block footer %}
-      <script>
-      $( function() {
-		$( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
-	    } );
-      </script>
-  {% endblock %}
-{% endblock %}
+
+        <footer class="footer2">
+          <div>© 2020 Copyright:
+            <a href="/">mybudget.marek-galganski.pl</a>
+          </div>
+        </footer>
 
 
+        <div class="modal fade" id="revenuesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="revenueName"></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="table-responsive">
+                    <table class="table table-dark table-hover" id="revenueTable">
+                        
+                    </table>  
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> 
+          
+          <div class="modal fade" id="expensesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="expenseName"></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="table-responsive">
+                    <table class="table  table-dark table-hover" id="expenseTable">
+                        
+                    </table>  
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal" id="setDate" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Set Range</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="/balanceSetRange" method="post">
+                    <div class="form-group">
+                      <label for="firstDate">First Date</label>
+                      <input class="form-control" id="datepicker1" name="firstDate"
+                      required placeholder="Enter Date">
+                      <small id="emailHelp" class="form-text text-muted"></small>
+                    </div>
+                    <div class="form-group">
+                      <label for="secondDate">Second date</label>
+                      <input id="datepicker2" class="form-control" name="secondDate"
+                      placeholder="Enter Date" required>
+                      <small id="emailHelp" class="form-text text-muted"></small>
+                    </div>       
+                </div>
+                <div class="modal-footer">         
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Set Range</button>
+                </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" value="{{firstDate}}" id="firstDate" name="firstDate">
+          <input type="hidden" value="{{secondDate}}" id="secondDate" name="secondDate">
+                        
+
+          <script src="https://code.jquery.com/jquery-3.4.1.min.js" 
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+          <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+          <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+          integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+          <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+          integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+          <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+          <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      
+<script>
+
+    $( function() {
+        $( "#datepicker1" ).datepicker({ dateFormat: 'yy-mm-dd' });
+    });
+
+    $( function() {
+        $( "#datepicker2" ).datepicker({ dateFormat: 'yy-mm-dd' });
+    });
+
+    $(document).ready(function(){
+
+        const example = document.getElementById('role')
+        const time = 2500
+          
+        setTimeout(() => {
+            example.style.display = 'none'
+        }, time)
+
+        $('.showRevenues').on('click', function() {
+
+            var firstDate = document.getElementById("firstDate").value;
+            var secondDate = document.getElementById("secondDate").value;
+
+            $('#revenuesModal').modal('show');
+
+            var nameCategory= $(this).closest('tr').find("input[name='revenueCategory']").val();
+
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var revenues = JSON.parse(this.responseText);
+                    
+                    $("#revenueName").text(nameCategory);
+                
+                    $("#revenueTable").html("");
+
+                    var tr = '<thead><tr style="text-align: center;">';
+                    tr +='<th scope="col">Date</th><th scope="col">Value</th><th scope="col">Comment</th><th scope="col">Delete</th>'; 
+                    tr +='</tr></thead><tbody>';
+                    for(var i = 0;i < revenues.length; i++){
+                        
+                        if(revenues[i][2] == nameCategory){
+                        tr += '<tr style="text-align: center;"><th scope="row">';
+                        tr += revenues[i][4];
+                        tr += '</th><td>';
+                        tr += revenues[i][3];
+                        tr += '</td><td>';
+                        tr += revenues[i][5];
+                        tr += '</td><td><form action="/Balance/deleteSingleRevenueNonStandard" method="post">';
+                        tr += '<input type="hidden" value="';
+                        tr += revenues[i][0];
+                        tr += '" name="id">';
+                        tr += '<input type="hidden" value="';
+                        tr += firstDate;
+                        tr += '" name="firstDate">';
+                        tr += '<input type="hidden" value="';
+                        tr += secondDate;
+                        tr += '" name="secondDate"><button type="submit"name="delete" class="btn btn-danger">Delete</button></form></td></tr>';
+                        }
+                    }
+                    tr += '</tbody>';
+
+
+                    $("#revenueTable").append(tr);
+
+                }
+            };
+            xmlhttp.open("GET", "/balance/getAllRevenuesNonStandard?firstDate=" + firstDate + "&secondDate=" + secondDate, true);
+            xmlhttp.send();  
+
+        });
+
+        $('.showExpenses').on('click', function() {
+
+            var firstDate = document.getElementById("firstDate").value;
+            var secondDate = document.getElementById("secondDate").value;
+            
+
+            $('#expensesModal').modal('show');
+
+            var nameCategory= $(this).closest('tr').find("input[name='expenseCategory']").val();
+            
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var expenses = JSON.parse(this.responseText);
+
+                    $("#expenseName").text(nameCategory);
+                
+                    $("#expenseTable").html("");
+
+                    var tr = '<thead><tr style="text-align: center;">';
+                    tr +='<th scope="col">Date</th><th scope="col">Value</th><th scope="col">Method Payment</th><th scope="col">Comment</th><th scope="col">Delete</th>'; 
+                    tr +='</tr></thead><tbody>';
+                    for(var i = 0;i < expenses.length; i++){
+                        
+                        if(expenses[i][2] == nameCategory){
+                        tr += '<tr style="text-align: center;"><th scope="row">';
+                        tr += expenses[i][5];
+                        tr += '</th><td>';
+                        tr += expenses[i][4];
+                        tr += '</td><td>';
+                        tr += expenses[i][3];
+                        tr += '</td><td>';
+                        tr += expenses[i][6];
+                        tr += '</td><td><form action="/Balance/deleteSingleExpenseNonStandard" method="post">';
+                        tr += '<input type="hidden" value="';
+                        tr += expenses[i][0];
+                        tr += '" name="id">';
+                        tr += '<input type="hidden" value="';
+                        tr += firstDate;
+                        tr += '" name="firstDate">';
+                        tr += '<input type="hidden" value="';
+                        tr += secondDate;
+                        tr += '" name="secondDate"><button type="submit"name="delete" class="btn btn-danger">Delete</button></form></td></tr>';
+                        }
+                    }
+                    tr += '</tbody>';
+
+
+                    $("#expenseTable").append(tr);
+
+                }
+            };
+            xmlhttp.open("GET", "/balance/getAllExpensesNonStandard?firstDate=" + firstDate + "&secondDate=" + secondDate, true);
+            xmlhttp.send();
+
+        });
+    });
+            
+    function showDate(){
+      $('#setDate').modal('show');
+    };
+
+    function func1 () {
+        dataPoints1 = [];
+        var firstDate = document.getElementById("firstDate").value;
+        var secondDate = document.getElementById("secondDate").value;
+
+        var chart1 = new CanvasJS.Chart("chartContainer1", {
+            animationEnabled: true,
+            theme: "dark1", // "light1", "light2", "dark1", "dark2"
+            
+            title:{
+                text: firstDate + " - " + secondDate,
+                fontFamily: "Segoe UI",
+            },
+            data: [{        
+                type: "column",  
+                showInLegend: true, 
+                yValueFormatString: "##0.00\"pln\"",
+                legendMarkerColor: "grey",
+                dataPoints: dataPoints1
+            }]
+        });
+
+            
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var dps = JSON.parse(this.responseText);
+                    for( var i = 0; i < dps.length; i++){
+                        dataPoints1.push(dps[i]);
+                    }
+                    chart1.render();
+                    }
+                };
+            xmlhttp.open("GET", "/balance/get-balance-to-char-non-standard?firstDate=" + firstDate + "&secondDate=" + secondDate, true);
+            xmlhttp.send();
+
+    };
+
+    function func2() {
+        dataPoints2 = [];
+        var firstDate = document.getElementById("firstDate").value;
+        var secondDate = document.getElementById("secondDate").value;
+
+        var chart2 = new CanvasJS.Chart("chartContainer2", {
+            animationEnabled: true,
+            theme: "dark1",
+            title: {
+                text: "Revenues",
+                fontFamily: "Segoe UI",
+            },
+            data: [{
+                type: "pie",
+                startAngle: 240,
+                yValueFormatString: "##0.00\"pln\"",
+                indexLabel: "{label} {y}",
+                dataPoints: dataPoints2
+            }]
+        });
+
+            
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var dps = JSON.parse(this.responseText);
+                    for( var i = 0; i < dps.length; i++){
+                        dataPoints2.push(dps[i]);
+                    }
+                    chart2.render();
+                    }
+                };
+            xmlhttp.open("GET", "/balance/getReveuesToCharNonStandard?firstDate=" + firstDate + "&secondDate=" + secondDate, true);
+            xmlhttp.send();
+
+    };
+
+    function func3() {
+        dataPoints3 = [];
+        var firstDate = document.getElementById("firstDate").value;
+        var secondDate = document.getElementById("secondDate").value;
+
+        var chart3 = new CanvasJS.Chart("chartContainer3", {
+            animationEnabled: true,
+            theme: "dark1",
+            title: {
+                text: "Expenses",
+                fontFamily: "Segoe UI",
+            },
+            data: [{
+                type: "pie",
+                startAngle: 240,
+                yValueFormatString: "##0.00\"pln\"",
+                indexLabel: "{label} {y}",
+                dataPoints: dataPoints3
+            }]
+        });
+
+            
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var dps = JSON.parse(this.responseText);
+                    for( var i = 0; i < dps.length; i++){
+                        dataPoints3.push(dps[i]);
+                    }
+                    chart3.render();
+                    }
+                };
+            xmlhttp.open("GET", "/balance/getExpensesToCharNonStandard?firstDate=" + firstDate + "&secondDate=" + secondDate, true);
+            xmlhttp.send();
+
+    };
+
+    function start() {
+        func1();
+        func2();
+        func3();
+    }
+    window.onload = start;
+</script>
+
+</body>
+</html>

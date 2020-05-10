@@ -162,12 +162,19 @@ class Expenses extends \Core\Model
     }
 
     public static function getSumExpensesFromOneCategory($categoryName){
-        $sql = 'SELECT SUM(amount) FROM expenses WHERE expense_category_assigned_to_user_id = :name AND user_id = :user_id';
+
+        $first_day_this_month  = date('Y-m-d', strtotime('first day of this month'));
+        $last_day_this_month = date('Y-m-d', strtotime('last day of this month'));
+
+        $sql = 'SELECT SUM(amount) FROM expenses WHERE expense_category_assigned_to_user_id = :name AND user_id = :user_id
+        AND date_of_expense>=:first_day AND date_of_expense<=:last_day';
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
         $stmt->bindValue(':name', $categoryName, PDO::PARAM_STR);
+        $stmt->bindValue(':first_day', $first_day_this_month);
+        $stmt->bindValue(':last_day', $last_day_this_month);
 
         $stmt->execute();
 

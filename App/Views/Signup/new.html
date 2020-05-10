@@ -55,14 +55,16 @@
 
 
     <section class="container-fluid">
-        <section class="row justify-content-center">
-          <section class="col-12 col-sm-8 col-md-6 col-lg-4 title">
-            <a href="/"><h1>Personal Budget</h1></a>
-          </section>      
-        </section>
+      <section class="row justify-content-center">
+        <section class="col-12 col-sm-8 col-md-6 col-lg-4 title">
+          <div class="pricing-header mx-auto text-center">
+            <a href="/"><img src="/images/MyBudget.png"></a>
+          </div>
+        </section>      
+      </section>
           <section class="row justify-content-center">
               <section class="col-12 col-sm-8 col-md-6 col-lg-4">
-                  <form class="form-container" action="/signup/create" method="post" id="formSignup"> 
+                  <form class="form-container box" action="/signup/create" method="post" id="formSignup"> 
                     <div class="formTitle">
                       <h3>Sign up</h3>
                     </div>
@@ -97,7 +99,7 @@
                         placeholder="Repeat password" required>
                       </div>
 
-                      <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                      <button type="submit" class="btn btn-primary btn-block" style="margin-top: 30px;">Submit</button>
 
                       <div class="bottom-text">
                         Do have account? <a href="/login">Log in</a>
@@ -106,7 +108,13 @@
                     </form>
               </section>
           </section>
+          
       </section>
+      <footer class="footer2" style="margin-top: 10%;">
+        <div>© 2020 Copyright:
+          <a href="/">mybudget.marek-galganski.pl</a>
+        </div>
+      </footer>
       
 
 

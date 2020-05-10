@@ -51,7 +51,7 @@ class Revenues extends \Core\Model
         }
 
         if(! static::validateDate($this->date)){
-            $this->errors['wrongDate'] = 'Please provide the date in "YYYY-MM-dd" .';
+            $this->errors['wrongDate'] = 'Please provide the date in "YYYY-MM-DD".';
         }
 
         if(empty($this->category)) {

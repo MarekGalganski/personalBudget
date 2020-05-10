@@ -2,9 +2,9 @@
 
 {% block body %}
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light navbarNew">
         <div class="container">
-            <a class="navbar-brand" href="#">My Finances</a>
+            <a class="navbar-brand" href="/start"><img src="/images/MyBudgetSmall.png"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -13,10 +13,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                <a class="nav-link" href="/start">Home</a>
-                </li>
-                <li class="nav-item active">
-                <a class="nav-link" href="/revenue">Add Revenue</a>
+                <a class="nav-link activeItem" href="/revenue">Add Revenue</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/expense">Add Expense</a>
@@ -34,15 +31,11 @@
             </div>
         </div>     
     </nav>
+    
     <section class="container-fluid">
         <section class="row justify-content-center">
-          <section class="col-12 col-sm-6 col-md-6 col-lg-3 title">
-           <h1>Personal Budget</h1>
-          </section>      
-        </section>
-        <section class="row justify-content-center">
             <section class="col-12 col-sm-8 col-md-6 col-lg-4">
-                <form class="form-container" action="/revenue/add" method="post" id="revenueForm"> 
+                <form class="form-container box" action="/revenue/add" method="post" id="revenueForm" style="margin-top: 20%;"> 
                   <div class="formTitle">
                     <h3>REVENUE</h3>
                   </div>
@@ -83,6 +76,13 @@
                   </form>
             </section>
       </section>
+
+      <footer class="footer2" style="margin-top: 5%;">
+        <div>© 2020 Copyright:
+          <a href="/">mybudget.marek-galganski.pl</a>
+        </div>
+      </footer>
+
       {% block footer %}
       <script>
       $( function() {

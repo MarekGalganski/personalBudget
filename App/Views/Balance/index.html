@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Personal Budget</title>
+    <title>My Budget</title>
     
     <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="icon" href="/images/MB.png">
 </head>
 <body>
   
@@ -22,55 +25,62 @@
         </div>
     {% endfor %}
     
-    <section class="container-fluid">
-        <section class="row ">
-          <section class="col-12 col-sm-2">
-              <div class="logo">
-                  <a href="/start"><h2>My Budget</h2></a>
-              </div>
-          </section>      
-        </section>
-        <section class="row">
-            <section class="col-12 col-sm-2">
-                <div class="nav flex-column nav-pills navigation"  role="tablist" aria-orientation="vertical">
-                    <a class="nav-link "  href="/revenue" role="tab" aria-controls="v-pills-home" aria-selected="true">Add Revenue</a>
-                    <a class="nav-link"  href="/expense" role="tab" aria-controls="v-pills-profile" aria-selected="false">Add Expense</a>
-                    <a class="nav-link active"  href="/balance" role="tab" aria-controls="v-pills-messages" aria-selected="false">Balance</a>
-                    <a class="nav-link"  href="/settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
-                    <a class="nav-link" href="/logout" role="tab" aria-controls="v-pills-settings" aria-selected="false">Log Out</a>
+    
+      <nav class="navbar navbar-expand-lg navbar-light navbarNew" style="margin-bottom: 3%;">
+        <div class="container">
+            <a class="navbar-brand" href="/start"><img src="/images/MyBudgetSmall.png"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+      
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                <a class="nav-link" href="/revenue">Add Revenue</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/expense">Add Expense</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link activeItem" href="/balance">Balance Sheet</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/settings">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Log Out</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Date Period
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/balance">Current Month</a>
+                    <a class="dropdown-item" href="/balance/previousMonth">Previous Month</a>
+                    <a class="dropdown-item" href="/balance/currentYear">Current Year</a>
+                    <a class="dropdown-item cursor" onclick="showDate()">Set Range</a>
                   </div>
-            </section>
-            <section class="col-12 col-sm-10">
-                <section class="row justify-content-between">
-                    <section class="col-12 col-sm-8 col-md-5 col-lg-4">
-                        <div id="chartContainer1" style="height: 200px; width: 100%; margin-top: 50px;"></div>
-                    </section>
-                    <section class="col-12 col-sm-8 col-md-5 col-lg-4" style="margin-right: 0;">
-                        <form>
-                            <div class="form-row align-items-center">
-                              <div class="col-auto my-1">
-                                <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
-                                <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                                  <option selected>Choose range</option>
-                                  <option value="1">Current Month</option>
-                                  <option value="2">Previous Mont</option>
-                                  <option value="3">Current Year</option>
-                                  <option value="3">Set range</option>
-                                </select>
-                              </div>
-                              <div class="col-auto my-1">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                              </div>
-                            </div>
-                          </form>
-                    </section>
+                </li>
+            </ul>
+            </div>
+        </div>     
+    </nav>
+    <section class="container-fluid">
+                
+                <h1>Current Month</h1>
+                <section class="row justify-content-md-center">
+                  <section class="col-12 col-sm-8 col-md-5 col-lg-4">
+                    <div id="chartContainer1" style="height: 200px; width: 100%; margin-top: 50px; margin-bottom: 20px;"></div>
+                  </section>  
                 </section>
-                <section class="row">
-                <section class="col-12 col-sm-8">
+
+                
+                <h2>Reveneues</h2>
+                <section class="row justify-content-md-center">
+                <section class="col-12 col-sm-8 col-xl-7">
                 <div class="revenue">
-                    <h3>Reveneues</h3>
-                    <label>Revenue table</label>
-                    <table class="table">
+                    <table class="table table-dark table-hover">
                         <thead class="thead-dark">
                           <tr style="text-align: center;">
                             <th scope="col">No</th>
@@ -86,7 +96,10 @@
                             <th scope="row">{{ counter }}</th>
                             <td>{{ groupedRevenue.income_category_assigned_to_user_id }}</td>
                             <td>{{ groupedRevenue.1 }}</td>
-                            <td><button type="button" class="btn btn-primary showRevenues">Show</button></td>
+                            <td>
+                              <input type="hidden" value="{{ groupedRevenue.income_category_assigned_to_user_id }}" name="revenueCategory"/>
+                              <button type="button" class="btn btn-primary showRevenues">Show</button>
+                            </td>
                           </tr>
                           {% endfor%}
                           {% if groupedRevenues is empty %}
@@ -103,24 +116,20 @@
                               <td>{{ sumRevenues }}</td>
                               <td></td>
                               </tr>
-                              <tr>
-                                  <th scope="row" colspan="4"></th>
-                              </tr>
                            {% endif %} 
                         </tbody>
                       </table>
                     </div>
                 </section>
-                <section class="col-12 col-sm-8 col-md-5 col-lg-4">
-                    <div id="chartContainer2" style="height: 200px; width: 100%; margin-top: 50px;"></div>
+                <section class="col-12 col-sm-4 col-xl-3">
+                    <div id="chartContainer2" style="height: 200px; width: 100%;"></div>
                 </section>
                 </section>
-                <section class="row">
-                    <section class="col-12 col-sm-8">
+                <h2>Expenses</h2>
+                <section class="row justify-content-md-center">
+                    <section class="col-12 col-sm-8 col-xl-7">
                     <div class="revenue">
-                        <h3>Expenses</h3>
-                        <label>Expense table</label>
-                        <table class="table">
+                        <table class="table table-dark table-hover">
                             <thead class="thead-dark">
                               <tr style="text-align: center;">
                                 <th scope="col">No</th>
@@ -136,7 +145,10 @@
                                 <th scope="row">{{ counter }}</th>
                                 <td>{{ groupedExpense.expense_category_assigned_to_user_id }}</td>
                                 <td>{{ groupedExpense.1 }}</td>
-                                <td><button type="button" class="btn btn-primary showExpenses">Show</button></td>
+                                <td>
+                                  <input type="hidden" value="{{ groupedExpense.expense_category_assigned_to_user_id }}" name="expenseCategory"/>
+                                  <button type="button" class="btn btn-primary showExpenses">Show</button>
+                                </td>
                               </tr>
                               {% endfor%}
                               {% if groupedExpenses is empty %}
@@ -153,55 +165,38 @@
                                 <td>{{ sumExpenses }}</td>
                                 <td></td>
                                 </tr>
-                                <tr>
-                                    <th scope="row" colspan="4"></th>
-                                </tr>
                             {% endif %}
                             </tbody>
                           </table>
                         </div>
                     </section>
-                    <section class="col-12 col-sm-8 col-md-5 col-lg-4">
-                        <div id="chartContainer3" style="height: 200px; width: 100%; margin-top: 50px;"></div>
+                    <section class="col-12 col-sm-4 col-xl-3">
+                        <div id="chartContainer3" style="height: 200px; width: 100%;"></div>
                     </section>
                     </section>
-            </section>
         </section>
+
+        <footer class="footer2">
+          <div>© 2020 Copyright:
+            <a href="/">mybudget.marek-galganski.pl</a>
+          </div>
+        </footer>
+
         <div class="modal fade" id="revenuesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLongTitle">Revenues</h5>
+                  <h5 class="modal-title" id="revenueName"></h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
-                    <table class="table">
-                        <thead class="thead-dark">
-                          <tr style="text-align: center;">
-                            <th scope="col">Date</th>
-                            <th scope="col">Value</th>
-                            <th scope="col">Comment</th>
-                            <th scope="col">Delete</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        {% for revenue in revenues %} 
-                          <tr style="text-align: center;">
-                            <th scope="row">{{ revenue.date_of_income }}</th>
-                            <td>{{ revenue.amount }}</td>
-                            <td>{{ revenue.income_comment }}</td>
-                            <td>
-                                <form action="/Balance/deleteSingleRevenueCurrentMonth" method="post">
-                                    <input type="hidden" value="{{ revenue.id }}" name="id">
-                                    <button type="submit"name="delete" class="btn btn-danger">Delete</button>
-                                </form>
-                            </td>
-                          </tr>
-                          {% endfor%}
-                        </tbody>
-                      </table>  
+                  <div class="table-responsive">
+                    <table class="table  table-dark table-hover" id="revenueTable">
+                        
+                    </table>  
+                  </div>
                 </div>
               </div>
             </div>
@@ -211,39 +206,50 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLongTitle">Expenses</h5>
+                  <h5 class="modal-title" id="expenseName"></h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
-                    <table class="table">
-                        <thead class="thead-dark">
-                          <tr style="text-align: center;">
-                            <th scope="col">Date</th>
-                            <th scope="col">Value</th>
-                            <th scope="col">Method Payment</th>
-                            <th scope="col">Comment</th>
-                            <th scope="col">Delete</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        {% for expense in expenses %} 
-                          <tr style="text-align: center;">
-                            <th scope="row">{{ expense.date_of_expense }}</th>
-                            <td>{{ expense.amount }}</td>
-                            <td>{{ expense.3 }}</td>
-                            <td>{{ expense.expense_comment }}</td>
-                            <td>
-                                <form action="/Balance/deleteSingleExpenseCurrentMonth" method="post">
-                                    <input type="hidden" value="{{ expense.id }}" name="id">
-                                    <button type="submit"name="delete" class="btn btn-danger">Delete</button>
-                                </form>
-                            </td>
-                          </tr>
-                          {% endfor%}
-                        </tbody>
-                      </table>  
+                  <div class="table-responsive">
+                    <table class="table  table-dark table-hover" id="expenseTable">
+                        
+                    </table>  
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal" id="setDate" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Set Range</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="/balanceSetRange" method="post">
+                    <div class="form-group">
+                      <label for="firstDate">First Date</label>
+                      <input class="form-control" id="datepicker1" name="firstDate"
+                      required placeholder="Enter Date">
+                      <small id="emailHelp" class="form-text text-muted"></small>
+                    </div>
+                    <div class="form-group">
+                      <label for="secondDate">Second date</label>
+                      <input id="datepicker2" class="form-control" name="secondDate"
+                      placeholder="Enter Date" required>
+                      <small id="emailHelp" class="form-text text-muted"></small>
+                    </div>       
+                </div>
+                <div class="modal-footer">         
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Set Range</button>
+                </form>
                 </div>
               </div>
             </div>
@@ -260,8 +266,15 @@
           integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
           <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+          <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
       
 <script>
+  $( function() {
+		$( "#datepicker1" ).datepicker({ dateFormat: 'yy-mm-dd' });
+	});
+  $( function() {
+		$( "#datepicker2" ).datepicker({ dateFormat: 'yy-mm-dd' });
+	});
 
     $(document).ready(function(){
 
@@ -276,6 +289,41 @@
 
             $('#revenuesModal').modal('show');
 
+            var nameCategory= $(this).closest('tr').find("input[name='revenueCategory']").val();
+            
+            $.getJSON("/balance/get-all-revenues-current-month", addData1);
+
+            function addData1(data){
+              var revenues = data;
+              
+              $("#revenueName").text(nameCategory);
+
+              $("#revenueTable").html("");
+
+              var tr = '<thead><tr style="text-align: center;">';
+              tr +='<th scope="col">Date</th><th scope="col">Value</th><th scope="col">Comment</th><th scope="col">Delete</th>'; 
+              tr +='</tr></thead><tbody>';
+              for(var i = 0;i < revenues.length; i++){
+                
+                if(revenues[i][2] == nameCategory){
+                  tr += '<tr style="text-align: center;"><th scope="row">';
+                  tr += revenues[i][4];
+                  tr += '</th><td>';
+                  tr += revenues[i][3];
+                  tr += '</td><td>';
+                  tr += revenues[i][5];
+                  tr += '</td><td><form action="/Balance/deleteSingleRevenueCurrentMonth" method="post">';
+                  tr += '<input type="hidden" value="';
+                  tr += revenues[i][0];
+                  tr += '" name="id"><button type="submit"name="delete" class="btn btn-danger">Delete</button></form></td></tr>';
+                }
+              }
+              tr += '</tbody>';
+
+
+              $("#revenueTable").append(tr);
+
+            }
 
         });
 
@@ -283,7 +331,43 @@
 
             $('#expensesModal').modal('show');
 
+            var nameCategory= $(this).closest('tr').find("input[name='expenseCategory']").val();
+            
+            $.getJSON("/balance/get-all-expenses-current-month", addData1);
 
+            function addData1(data) {
+              var expenses = data;
+
+              $("#expenseName").text(nameCategory);
+              
+              $("#expenseTable").html("");
+
+              var tr = '<thead><tr style="text-align: center;">';
+              tr +='<th scope="col">Date</th><th scope="col">Value</th><th scope="col">Method Payment</th><th scope="col">Comment</th><th scope="col">Delete</th>'; 
+              tr +='</tr></thead><tbody>';
+              for(var i = 0;i < expenses.length; i++){
+                
+                if(expenses[i][2] == nameCategory){
+                  tr += '<tr style="text-align: center;"><th scope="row">';
+                  tr += expenses[i][5];
+                  tr += '</th><td>';
+                  tr += expenses[i][4];
+                  tr += '</td><td>';
+                  tr += expenses[i][3];
+                  tr += '</td><td>';
+                  tr += expenses[i][6];
+                  tr += '</td><td><form action="/Balance/deleteSingleExpenseCurrentMonth" method="post">';
+                  tr += '<input type="hidden" value="';
+                  tr += expenses[i][0];
+                  tr += '" name="id"><button type="submit"name="delete" class="btn btn-danger">Delete</button></form></td></tr>';
+                }
+              }
+              tr += '</tbody>';
+
+
+              $("#expenseTable").append(tr);
+
+            }   
         });
     });
 </script>
@@ -296,13 +380,16 @@ window.onload = function () {
                 
     var chart1 = new CanvasJS.Chart("chartContainer1", {
         animationEnabled: true,
-        theme: "light2", // "light1", "light2", "dark1", "dark2"
+        theme: "dark1", // "light1", "light2", "dark1", "dark2"
+        
         title:{
-            text: "Current Month"
+            text: "Current Month",
+            fontFamily: "Segoe UI",
         },
         data: [{        
             type: "column",  
             showInLegend: true, 
+            yValueFormatString: "##0.00\"pln\"",
             legendMarkerColor: "grey",
             dataPoints: dataPoints1
         }]
@@ -310,6 +397,7 @@ window.onload = function () {
             
     function addData1(data) {
         var dps = data;
+        console.log(dps);
 
         for( var i = 0; i < dps.length; i++){
             
@@ -324,8 +412,10 @@ window.onload = function () {
 
     var chart2 = new CanvasJS.Chart("chartContainer2", {
         animationEnabled: true,
+        theme: "dark1",
         title: {
-            text: "Revenues"
+            text: "Revenues",
+            fontFamily: "Segoe UI",
         },
         data: [{
             type: "pie",
@@ -353,8 +443,10 @@ window.onload = function () {
 
     var chart3 = new CanvasJS.Chart("chartContainer3", {
         animationEnabled: true,
+        theme: "dark1",
         title: {
-            text: "Expenses"
+            text: "Expenses",
+            fontFamily: "Segoe UI",
         },
         data: [{
             type: "pie",
@@ -380,6 +472,9 @@ window.onload = function () {
 
     $.getJSON("/balance/get-expenses-to-char-current-month-action", addData3);
 
+    }
+    function showDate(){
+      $('#setDate').modal('show');
     }
 
 </script>

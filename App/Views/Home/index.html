@@ -4,32 +4,45 @@
 
 {% block body %}
 
-<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  <h1 class="display-4">Personal Budget</h1>
+
+<div class="pricing-header mx-auto text-center title">
+  <a href="/"><img src="/images/MyBudget.png"></a>
 </div>
 
 <div class="container">
-  <div class="row">
-    <div class="col-sm-6">
-      <div class="card mx-auto" >
-        <div class="card-body mx-auto">
-          <h5 class="card-title mx-auto">Create an account</h5>
-          <a href="/signup" class="btn btn-primary mx-auto" >Sign up</a>
+  <div class="row justify-content-md-center">
+    <div class="col-sm-6 col-md-5" >
+      <div class="card mx-auto boxDescription">
+        <div class="card-body mx-auto" style="padding: 40px;min-height: 305px;">
+         <p style="text-align: justify; font-size: 16.5px;">
+         Don't you know how much money you spend? Do you want control your expenses and start saving money?
+         You can get started right now! All you need to do is register for free and log in to your account.
+         Add incomes and expenses, select different categories, set your limits and check your balance sheet.
+         Use it regularly and enjoy a well-arranged budget.
+         <p>
         </div>
       </div>
     </div>
-    <div class="col-sm-6">
-      <div class="card mx-auto">
-        <div class="card-body mx-auto">
-          <h5 class="card-title mx-auto">You can login</h5>
-          <a href="/login" class="btn btn-primary mx-auto" >Log in</a>
-        </div>
+    <div class="col-sm-6 col-md-5">
+      <div class="card mx-auto boxForm" style="min-height: 306px;">
+          <h5 class="card-title">Do you have an account?</h5>
+          <a href="/login" class="btn btn-primary" style="width:50%; margin: 15px auto 15px auto;">Log in</a>
+          <h5 class="card-title">Don't you have an account?</h5>
+          <a href="/signup" class="btn btn-primary" style="width:50%; margin: 15px auto 15px auto;">Sign up</a>
       </div>
     </div>
   </div>
   </div>
+
+  <footer class="footer1">
+    <div>© 2020 Copyright:
+      <a href="/">mybudget.marek-galganski.pl</a>
+    </div>
+  </footer>
 
 
 
 
 {% endblock %}
+
+

@@ -27,6 +27,8 @@ $router->add('start', ['controller' => 'Start', 'action' => 'index']);
 $router->add('revenue', ['controller' => 'Revenue', 'action' => 'index']);
 $router->add('expense', ['controller' => 'Expense', 'action' => 'index']);
 $router->add('balance', ['controller' => 'Balance', 'action' => 'index']);
+$router->add('settings', ['controller' => 'Settings', 'action' => 'index']);
+$router->add('balanceSetRange',['controller' => 'Balance', 'action' => 'nonStandard']);
 $router->add('{controller}/{action}');
 
 $router->dispatch($_SERVER['QUERY_STRING']);

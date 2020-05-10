@@ -2,61 +2,53 @@
 
 {% block body %}
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">My Finances</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-      
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                <a class="nav-link" href="/start">Home</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" href="/revenue">Add Revenue</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/expense">Add Expense</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/balance">Balance Sheet</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/settings">Settings</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Log Out</a>
-                </li>
-            </ul>
-            </div>
-        </div>     
-    </nav>
+<nav class="navbar navbar-expand-lg navbar-light navbarNew" style="margin-bottom: 3%;">
+    <div class="container">
+        <a class="navbar-brand" href="/start"><img src="/images/MyBudgetSmall.png"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+            <a class="nav-link" href="/revenue">Add Revenue</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link activeItem" href="/expense">Add Expense</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/balance">Balance Sheet</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/settings">Settings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Log Out</a>
+            </li>
+        </ul>
+        </div>
+    </div>     
+</nav>
     <section class="container-fluid">
         <section class="row justify-content-center">
-          <section class="col-12 col-sm-6 col-md-6 col-lg-3 title">
-           <h1>Personal Budget</h1>
-          </section>      
-        </section>
-        <section class="row justify-content-center">
             <section class="col-12 col-sm-8 col-md-6 col-lg-4">
-                <div id="ok" style="display: none;">
+                <div id="ok" style="display: none;" class="boxLimit">
                     <div class="four">
                         <p><b>Limit: </b><span id="txt1"></span></p>
                     </div>
                     <div class="four">
-                        <p><b>Has already been issued: </b><span id="txt2"></span></p>
+                        <p><b>Has been issued: </b><span id="txt2"></span></p>
                     </div>
                     <div class="four">
                         <p><b>Difference: </b><span id="txt3"></span></p>
                     </div>
                     <div class="four">
-                        <p><b>Expenses+Amount entered: </b><span id="txt4"></span></p>
+                        <p><b>Expenses + amount entered: </b><span id="txt4"></span></p>
                     </div>
                 </div>
-                <form class="form-container" action="/expense/add" method="post" id="expenseForm"> 
+                <form class="form-container box" action="/expense/add" method="post" id="expenseForm"> 
                   <div class="formTitle">
                     <h3>EXPENSE</h3>
                   </div>
@@ -91,8 +83,19 @@
                             
                             {% for categorie in categories %}
                             <div class="input-group">
-                            <label><input type="radio" name="category" onclick="showHint()"  class="category" value="{{categorie.name}}">{{categorie.name}}</br>
-                                  {{categorie.category_limit}}</label></br>
+                            <label><input type="radio" name="category" onclick="showHint()"  class="category"
+                                 value="{{categorie.name}}">
+                                 {% if categorie.category_limit is empty %}
+                                
+                                 {{categorie.name}}
+
+                                 {% else %}
+
+                                 {{categorie.name}} [Limit - &nbsp;{{ categorie.category_limit }}]
+
+
+                                 {% endif %}
+                                 </label>
                             </div>
 							{% endfor%}
                         
@@ -110,6 +113,13 @@
                   </form>
             </section>
       </section>
+
+      <footer class="footer2">
+        <div>© 2020 Copyright:
+          <a href="/">mybudget.marek-galganski.pl</a>
+        </div>
+      </footer>
+      
       {% block footer %}
  
       <script>
@@ -140,21 +150,20 @@
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     if(this.responseText === ""){
-                    console.log('Nie pokaze nic');
                     document.getElementById("ok").style.display = "none";
                     }else{
                         var array = this.response.split("|");
                         
                         if(array[2] >= 0){
                             document.getElementById("ok").style.display = "block";
-                            document.getElementById("ok").style.backgroundColor = "green";
+                            document.getElementById("ok").style.boxShadow = "0px 0px 10px 0px #7FFF00";
                             document.getElementById("txt1").innerHTML = array[0];
                             document.getElementById("txt2").innerHTML = array[1];
                             document.getElementById("txt3").innerHTML = array[2];
                             document.getElementById("txt4").innerHTML = array[3];
                         }else{
                             document.getElementById("ok").style.display = "block";
-                            document.getElementById("ok").style.backgroundColor = "red";
+                            document.getElementById("ok").style.boxShadow = "0px 0px 10px 0px red";
                             document.getElementById("txt1").innerHTML = array[0];
                             document.getElementById("txt2").innerHTML = array[1];
                             document.getElementById("txt3").innerHTML = array[2];

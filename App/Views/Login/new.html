@@ -8,12 +8,14 @@
 <section class="container-fluid ">
   <section class="row justify-content-center">
     <section class="col-12 col-sm-8 col-md-6 col-lg-4 title">
-      <a href="/"><h1>Personal Budget</h1></a>
+      <div class="pricing-header mx-auto text-center">
+        <a href="/"><img src="/images/MyBudget.png"></a>
+      </div>
     </section>      
   </section>
     <section class="row justify-content-center">
         <section class="col-12 col-sm-8 col-md-6 col-lg-4">
-            <form class="form-container" action="/login/create" method="post"> 
+            <form class="form-container box" action="/login/create" method="post"> 
                 <div class="form-group">
                   <label for="inputEmail">Email address</label>
                   <input id="inputEmail" name="email" placeholder="Email" type="email" autofocus value="{{ email }}"
@@ -36,6 +38,11 @@
         </section>
     </section>
 </section>
+<footer class="footer2" style="margin-top: 10%;">
+  <div>© 2020 Copyright:
+    <a href="/">mybudget.marek-galganski.pl</a>
+  </div>
+</footer>
 
     
 

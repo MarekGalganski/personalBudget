@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Budget</title>
 
     <title>{% block title %}{% endblock %}</title>
 
     <link rel="stylesheet" href="/css/style.css" type="text/css"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="icon" href="/images/MB.png">
 
 </head>
 <body>
 
     {% for message in flash_messages %}
-        <div class="alert alert-{{ message.type }}" role="alert">
+        <div class="alert alert-{{ message.type }}" role="alert" id="role">
             {{ message.body }}
         </div>
     {% endfor %}
@@ -32,5 +35,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
     {% block footer %}
     {% endblock %}
+    <script>
+        $(document).ready(function(){
+
+            const example = document.getElementById('role')
+            const time = 2500
+            
+            setTimeout(() => {
+                example.style.display = 'none'
+            }, time)
+        });
+
+    </script>
 </body>
 </html>
